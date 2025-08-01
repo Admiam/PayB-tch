@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		655F95C12E3CF7DC000CB4A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 655F95AB2E3CF7D9000CB4A9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 655F95B22E3CF7D9000CB4A9;
+			remoteInfo = Paybitch;
+		};
+		655F95CB2E3CF7DC000CB4A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 655F95AB2E3CF7D9000CB4A9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 655F95B22E3CF7D9000CB4A9;
+			remoteInfo = Paybitch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		655F95B32E3CF7D9000CB4A9 /* Paybitch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Paybitch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		655F95C02E3CF7DC000CB4A9 /* PaybitchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaybitchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		655F95CA2E3CF7DC000CB4A9 /* PaybitchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaybitchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		655F95B52E3CF7D9000CB4A9 /* Paybitch */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Paybitch;
+			sourceTree = "<group>";
+		};
+		655F95C32E3CF7DC000CB4A9 /* PaybitchTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PaybitchTests;
+			sourceTree = "<group>";
+		};
+		655F95CD2E3CF7DC000CB4A9 /* PaybitchUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PaybitchUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		655F95B02E3CF7D9000CB4A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		655F95BD2E3CF7DC000CB4A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		655F95C72E3CF7DC000CB4A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		655F95AA2E3CF7D9000CB4A9 = {
+			isa = PBXGroup;
+			children = (
+				655F95B52E3CF7D9000CB4A9 /* Paybitch */,
+				655F95C32E3CF7DC000CB4A9 /* PaybitchTests */,
+				655F95CD2E3CF7DC000CB4A9 /* PaybitchUITests */,
+				655F95B42E3CF7D9000CB4A9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		655F95B42E3CF7D9000CB4A9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				655F95B32E3CF7D9000CB4A9 /* Paybitch.app */,
+				655F95C02E3CF7DC000CB4A9 /* PaybitchTests.xctest */,
+				655F95CA2E3CF7DC000CB4A9 /* PaybitchUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		655F95B22E3CF7D9000CB4A9 /* Paybitch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 655F95D42E3CF7DC000CB4A9 /* Build configuration list for PBXNativeTarget "Paybitch" */;
+			buildPhases = (
+				655F95AF2E3CF7D9000CB4A9 /* Sources */,
+				655F95B02E3CF7D9000CB4A9 /* Frameworks */,
+				655F95B12E3CF7D9000CB4A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				655F95B52E3CF7D9000CB4A9 /* Paybitch */,
+			);
+			name = Paybitch;
+			packageProductDependencies = (
+			);
+			productName = Paybitch;
+			productReference = 655F95B32E3CF7D9000CB4A9 /* Paybitch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		655F95BF2E3CF7DC000CB4A9 /* PaybitchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 655F95D72E3CF7DC000CB4A9 /* Build configuration list for PBXNativeTarget "PaybitchTests" */;
+			buildPhases = (
+				655F95BC2E3CF7DC000CB4A9 /* Sources */,
+				655F95BD2E3CF7DC000CB4A9 /* Frameworks */,
+				655F95BE2E3CF7DC000CB4A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				655F95C22E3CF7DC000CB4A9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				655F95C32E3CF7DC000CB4A9 /* PaybitchTests */,
+			);
+			name = PaybitchTests;
+			packageProductDependencies = (
+			);
+			productName = PaybitchTests;
+			productReference = 655F95C02E3CF7DC000CB4A9 /* PaybitchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		655F95C92E3CF7DC000CB4A9 /* PaybitchUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 655F95DA2E3CF7DC000CB4A9 /* Build configuration list for PBXNativeTarget "PaybitchUITests" */;
+			buildPhases = (
+				655F95C62E3CF7DC000CB4A9 /* Sources */,
+				655F95C72E3CF7DC000CB4A9 /* Frameworks */,
+				655F95C82E3CF7DC000CB4A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				655F95CC2E3CF7DC000CB4A9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				655F95CD2E3CF7DC000CB4A9 /* PaybitchUITests */,
+			);
+			name = PaybitchUITests;
+			packageProductDependencies = (
+			);
+			productName = PaybitchUITests;
+			productReference = 655F95CA2E3CF7DC000CB4A9 /* PaybitchUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		655F95AB2E3CF7D9000CB4A9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					655F95B22E3CF7D9000CB4A9 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					655F95BF2E3CF7DC000CB4A9 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 655F95B22E3CF7D9000CB4A9;
+					};
+					655F95C92E3CF7DC000CB4A9 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 655F95B22E3CF7D9000CB4A9;
+					};
+				};
+			};
+			buildConfigurationList = 655F95AE2E3CF7D9000CB4A9 /* Build configuration list for PBXProject "Paybitch" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 655F95AA2E3CF7D9000CB4A9;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 655F95B42E3CF7D9000CB4A9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				655F95B22E3CF7D9000CB4A9 /* Paybitch */,
+				655F95BF2E3CF7DC000CB4A9 /* PaybitchTests */,
+				655F95C92E3CF7DC000CB4A9 /* PaybitchUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		655F95B12E3CF7D9000CB4A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		655F95BE2E3CF7DC000CB4A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		655F95C82E3CF7DC000CB4A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		655F95AF2E3CF7D9000CB4A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		655F95BC2E3CF7DC000CB4A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		655F95C62E3CF7DC000CB4A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		655F95C22E3CF7DC000CB4A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 655F95B22E3CF7D9000CB4A9 /* Paybitch */;
+			targetProxy = 655F95C12E3CF7DC000CB4A9 /* PBXContainerItemProxy */;
+		};
+		655F95CC2E3CF7DC000CB4A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 655F95B22E3CF7D9000CB4A9 /* Paybitch */;
+			targetProxy = 655F95CB2E3CF7DC000CB4A9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		655F95D22E3CF7DC000CB4A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		655F95D32E3CF7DC000CB4A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		655F95D52E3CF7DC000CB4A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = secondApp.Paybitch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		655F95D62E3CF7DC000CB4A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = secondApp.Paybitch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		655F95D82E3CF7DC000CB4A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = secondApp.PaybitchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Paybitch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paybitch";
+			};
+			name = Debug;
+		};
+		655F95D92E3CF7DC000CB4A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = secondApp.PaybitchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Paybitch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Paybitch";
+			};
+			name = Release;
+		};
+		655F95DB2E3CF7DC000CB4A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = secondApp.PaybitchUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Paybitch;
+			};
+			name = Debug;
+		};
+		655F95DC2E3CF7DC000CB4A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WT438UAQVS;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = secondApp.PaybitchUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Paybitch;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		655F95AE2E3CF7D9000CB4A9 /* Build configuration list for PBXProject "Paybitch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				655F95D22E3CF7DC000CB4A9 /* Debug */,
+				655F95D32E3CF7DC000CB4A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		655F95D42E3CF7DC000CB4A9 /* Build configuration list for PBXNativeTarget "Paybitch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				655F95D52E3CF7DC000CB4A9 /* Debug */,
+				655F95D62E3CF7DC000CB4A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		655F95D72E3CF7DC000CB4A9 /* Build configuration list for PBXNativeTarget "PaybitchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				655F95D82E3CF7DC000CB4A9 /* Debug */,
+				655F95D92E3CF7DC000CB4A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		655F95DA2E3CF7DC000CB4A9 /* Build configuration list for PBXNativeTarget "PaybitchUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				655F95DB2E3CF7DC000CB4A9 /* Debug */,
+				655F95DC2E3CF7DC000CB4A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 655F95AB2E3CF7D9000CB4A9 /* Project object */;
+}
