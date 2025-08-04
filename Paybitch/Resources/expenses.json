@@ -1,0 +1,113 @@
+[
+    {
+        "id": "e1",
+        "groupId": "g1",
+        "title": "Airbnb (Madrid)",
+        "amount": 450.0,
+        "currency": "EUR",
+        "paidBy": "u1",
+        "splitAmong": [
+            "u1",
+            "u2",
+            "u3"
+        ],
+        "date": "2025-07-10",
+        "notes": "3 nights apartment"
+    },
+    {
+        "id": "e2",
+        "groupId": "g1",
+        "title": "Tapas Dinner",
+        "amount": 90.5,
+        "currency": "EUR",
+        "paidBy": "u2",
+        "splitAmong": [
+            "u1",
+            "u2",
+            "u3"
+        ],
+        "date": "2025-07-11"
+    },
+    {
+        "id": "e5",
+        "groupId": "g1",
+        "title": "Prado Museum Tickets",
+        "amount": 45.0,
+        "currency": "EUR",
+        "paidBy": "u3",
+        "splitAmong": [
+            "u1",
+            "u2",
+            "u3"
+        ],
+        "date": "2025-07-12"
+    },
+    {
+        "id": "e3",
+        "groupId": "g2",
+        "title": "Rent August",
+        "amount": 1200.0,
+        "currency": "USD",
+        "paidBy": "u4",
+        "splitAmong": [
+            "u4",
+            "u5"
+        ],
+        "date": "2025-08-01"
+    },
+    {
+        "id": "e4",
+        "groupId": "g2",
+        "title": "Utilities July",
+        "amount": 150.75,
+        "currency": "USD",
+        "paidBy": "u5",
+        "splitAmong": [
+            "u4",
+            "u5"
+        ],
+        "date": "2025-07-28"
+    },
+    {
+        "id": "e6",
+        "groupId": "g2",
+        "title": "Groceries Week 31",
+        "amount": 210.0,
+        "currency": "USD",
+        "paidBy": "u4",
+        "splitAmong": [
+            "u4",
+            "u5"
+        ],
+        "date": "2025-07-31"
+    },
+    {
+        "id": "e7",
+        "groupId": "g3",
+        "title": "Team Lunch",
+        "amount": 78.0,
+        "currency": "USD",
+        "paidBy": "u2",
+        "splitAmong": [
+            "u2",
+            "u4",
+            "u6"
+        ],
+        "date": "2025-06-20"
+    },
+    {
+        "id": "e8",
+        "groupId": "g3",
+        "title": "Office Snacks",
+        "amount": 35.0,
+        "currency": "USD",
+        "paidBy": "u6",
+        "splitAmong": [
+            "u2",
+            "u4",
+            "u6"
+        ],
+        "date": "2025-06-22"
+    }
+]
+
