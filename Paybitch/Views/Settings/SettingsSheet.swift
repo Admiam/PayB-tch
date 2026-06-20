@@ -101,6 +101,7 @@ struct SettingsSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     PaybitchPrimaryButton(title: "Done") { dismiss() }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .sheet(isPresented: $addingMember) { AddMemberSheet(editing: nil) }
             .sheet(item: $editingMember) { m in AddMemberSheet(editing: m) }

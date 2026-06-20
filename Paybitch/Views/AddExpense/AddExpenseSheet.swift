@@ -135,11 +135,13 @@ struct AddExpenseSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     PaybitchCloseButton { dismiss() }
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .confirmationAction) {
                     PaybitchPrimaryButton(title: "Save", disabled: !canSave) {
                         Task { await save() }
                     }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .task { setDefaults() }
             .confirmationDialog(

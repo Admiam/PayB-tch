@@ -50,11 +50,13 @@ struct ExpenseDetailView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     PaybitchCloseButton { dismiss() }
                 }
+                .sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .primaryAction) {
                     if expense != nil {
                         PaybitchTextButton(title: "Edit") { editing = true }
                     }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .sheet(isPresented: $editing) {
                 if let e = expense, let g = group {

@@ -35,6 +35,7 @@ struct IconPickerSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     PaybitchCloseButton { dismiss() }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
         }
     }
