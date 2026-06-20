@@ -109,20 +109,9 @@ struct ExpenseDetailView: View {
                 }
             }
 
-            Button {
+            PaybitchDestructiveButton(title: "Delete expense") {
                 showDeleteConfirm = true
-            } label: {
-                Text("Delete expense")
-                    .font(.spaceGrotesk(14, weight: .bold))
-                    .foregroundStyle(Paybitch.negative)
-                    .frame(maxWidth: .infinity)
-                    .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .strokeBorder(Paybitch.negative.opacity(0.3), lineWidth: 1.5)
-                    )
             }
-            .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 60)
@@ -161,12 +150,8 @@ struct ExpenseDetailView: View {
             .minimumScaleFactor(0.6)
 
             HStack(spacing: 6) {
-                StickerBadge(text: splitKindLabel(e.splitType.kind), color: Paybitch.lime, rotation: -3)
-                StickerBadge(
-                    text: PaybitchDate.mediumDisplay.string(from: e.date),
-                    color: Paybitch.pink,
-                    rotation: 3
-                )
+                StickerBadge(text: splitKindLabel(e.splitType.kind), rotation: -3)
+                StickerBadge(text: PaybitchDate.mediumDisplay.string(from: e.date), rotation: 3)
             }
         }
         .frame(maxWidth: .infinity)

@@ -2,7 +2,8 @@
 //  PaybitchComponents.swift
 //  Paybitch
 //
-//  Reusable design-system components: wordmark, sticker badge, chip, tile.
+//  Reusable design-system components: wordmark, badge, chip, tile, buttons.
+//  All tappable controls route through the unified Liquid Glass button style.
 //
 
 import SwiftUI
@@ -25,24 +26,22 @@ struct PaybitchWordmark: View {
     }
 }
 
-// MARK: - Sticker badge
+// MARK: - Badge
 
+/// Small neutral pill used for metadata (split type, date, …).
 struct StickerBadge: View {
     let text: String
-    var color: Color = Paybitch.pink
-    var rotation: Double = -3
-
-    private var fg: Color { color == Paybitch.lime ? Color(red: 0.102, green: 0.039, blue: 0.094) : .white }
+    var rotation: Double = 0
 
     var body: some View {
         Text(text.uppercased())
             .font(.spaceGrotesk(11, weight: .heavy))
             .tracking(0.6)
-            .foregroundStyle(fg)
-            .padding(.horizontal, 9)
-            .padding(.vertical, 4)
-            .background(Capsule().fill(color))
-            .shadow(color: .black.opacity(0.2), radius: 0, x: 0, y: 2)
+            .foregroundStyle(Paybitch.textPrimary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(Paybitch.chipBg))
+            .overlay(Capsule().stroke(Paybitch.divider, lineWidth: 1))
             .rotationEffect(.degrees(rotation))
     }
 }
@@ -59,7 +58,7 @@ struct GroupChip: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Circle()
-                    .fill(isActive ? .white : Paybitch.pink)
+                    .fill(isActive ? Color.white : Paybitch.pink)
                     .frame(width: 6, height: 6)
                 Text(name)
                     .font(.spaceGrotesk(14, weight: .bold))
@@ -68,16 +67,11 @@ struct GroupChip: View {
                     .font(.spaceGrotesk(11, weight: .bold))
                     .opacity(0.6)
             }
-            .foregroundStyle(isActive ? .white : Paybitch.textPrimary)
+            .foregroundStyle(isActive ? Color.white : Paybitch.textPrimary)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(
-                Capsule().fill(isActive ? Paybitch.pink : Paybitch.chipBg)
-            )
-            .scaleEffect(isActive ? 1.04 : 1)
-            .shadow(color: isActive ? Paybitch.pink.opacity(0.4) : .clear, radius: 14, x: 0, y: 4)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PaybitchGlassButton(kind: isActive ? .accent : .neutral, shape: Capsule()))
         .animation(.easeOut(duration: 0.2), value: isActive)
     }
 }
@@ -91,12 +85,8 @@ struct NewGroupChip: View {
                 .foregroundStyle(Paybitch.pink)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(
-                    Capsule()
-                        .stroke(Paybitch.pink.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PaybitchGlassButton(kind: .neutral, shape: Capsule()))
     }
 }
 
@@ -203,7 +193,9 @@ struct PaybitchInlineRow<Trailing: View>: View {
     }
 }
 
-/// Pink primary action button used in sheet toolbars and modals.
+// MARK: - Unified buttons (Liquid Glass)
+
+/// Primary action button (Save / Done). Pink-tinted glass capsule.
 struct PaybitchPrimaryButton: View {
     let title: String
     var disabled: Bool = false
@@ -213,17 +205,15 @@ struct PaybitchPrimaryButton: View {
             Text(title)
                 .font(.spaceGrotesk(15, weight: .heavy))
                 .foregroundStyle(.white)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
-                .background(Capsule().fill(Paybitch.pink))
-                .opacity(disabled ? 0.4 : 1)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 11)
         }
-        .buttonStyle(.plain)
-        .paybitchShadow(Paybitch.Shadow.pinkGlow)
+        .buttonStyle(PaybitchGlassButton(kind: .accent, shape: Capsule(), dimmed: disabled))
         .disabled(disabled)
     }
 }
 
+/// Plain text action (e.g. "Edit").
 struct PaybitchTextButton: View {
     let title: String
     var foreground: Color = Paybitch.pink
@@ -238,27 +228,48 @@ struct PaybitchTextButton: View {
     }
 }
 
+/// Circular close button used in sheet toolbars. Neutral glass.
 struct PaybitchCloseButton: View {
-    var foreground: Color = .white
-    var background: Color = Paybitch.pink
     let action: () -> Void
     var body: some View {
         Button(action: action) {
             Image(systemName: "xmark")
                 .font(.system(size: 13, weight: .heavy))
-                .foregroundStyle(foreground)
-                .frame(width: 30, height: 30)
-                .background(Circle().fill(background))
-                .contentShape(Circle())
+                .foregroundStyle(Paybitch.textPrimary)
+                .frame(width: 34, height: 34)
         }
-        .buttonStyle(.plain)
-        .paybitchShadow(Paybitch.Shadow.pinkGlow)
+        .buttonStyle(PaybitchGlassButton(kind: .neutral, shape: Circle()))
         .accessibilityLabel(Text("Close"))
+    }
+}
+
+/// Full-width destructive action (delete). Neutral glass with red label —
+/// replaces the copy-pasted outlined delete buttons across the sheets.
+struct PaybitchDestructiveButton: View {
+    let title: String
+    var systemImage: String = "trash"
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.spaceGrotesk(14, weight: .bold))
+                .foregroundStyle(Paybitch.negative)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+        }
+        .buttonStyle(
+            PaybitchGlassButton(
+                kind: .neutral,
+                shape: RoundedRectangle(cornerRadius: Paybitch.radiusButton, style: .continuous)
+            )
+        )
     }
 }
 
 // MARK: - Tile
 
+/// Stat tile on a neutral Liquid Glass surface. The amount carries the only
+/// color (semantic green/red or the pink accent) so the surface stays neutral.
 struct PaybitchTile<Icon: View>: View {
     let label: String
     let amount: String
@@ -266,8 +277,8 @@ struct PaybitchTile<Icon: View>: View {
     let sub: String?
     /// 0...1 — fills bar viz under amount.
     var ratio: Double = 0
-    var background: Color
-    var foreground: Color
+    /// Color of the headline amount (semantic or accent).
+    var amountColor: Color = Paybitch.textPrimary
     var isBig: Bool = false
     @ViewBuilder var icon: () -> Icon
 
@@ -277,10 +288,10 @@ struct PaybitchTile<Icon: View>: View {
                 Text(label.uppercased())
                     .font(.spaceGrotesk(12, weight: .bold))
                     .tracking(0.5)
-                    .foregroundStyle(foreground.opacity(0.75))
+                    .foregroundStyle(Paybitch.textMuted)
                 Spacer()
                 icon()
-                    .foregroundStyle(foreground.opacity(0.55))
+                    .foregroundStyle(amountColor.opacity(0.85))
             }
 
             Spacer(minLength: 0)
@@ -296,14 +307,14 @@ struct PaybitchTile<Icon: View>: View {
                         .font(.spaceGrotesk(isBig ? 24 : 16, weight: .bold))
                         .opacity(0.6)
                 }
-                .foregroundStyle(foreground)
+                .foregroundStyle(amountColor)
 
                 if ratio > 0 {
                     GeometryReader { g in
                         ZStack(alignment: .leading) {
-                            Capsule().fill(.black.opacity(0.15))
+                            Capsule().fill(Paybitch.textMuted.opacity(0.25))
                             Capsule()
-                                .fill(foreground.opacity(0.5))
+                                .fill(amountColor.opacity(0.7))
                                 .frame(width: max(0, min(1, ratio)) * g.size.width)
                         }
                     }
@@ -314,7 +325,7 @@ struct PaybitchTile<Icon: View>: View {
                 if let sub {
                     Text(sub)
                         .font(.spaceGrotesk(11, weight: .semibold))
-                        .foregroundStyle(foreground.opacity(0.6))
+                        .foregroundStyle(Paybitch.textMuted)
                         .padding(.top, 6)
                 }
             }
@@ -322,9 +333,9 @@ struct PaybitchTile<Icon: View>: View {
         .padding(isBig ? 20 : 16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(minHeight: isBig ? 130 : 110)
-        .background(
-            RoundedRectangle(cornerRadius: Paybitch.radiusTile, style: .continuous).fill(background)
+        .glassEffect(
+            .regular,
+            in: RoundedRectangle(cornerRadius: Paybitch.radiusTile, style: .continuous)
         )
-        .paybitchShadow(Paybitch.Shadow.tile)
     }
 }

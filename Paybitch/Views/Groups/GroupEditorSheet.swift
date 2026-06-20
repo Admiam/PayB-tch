@@ -117,20 +117,9 @@ struct GroupEditorSheet: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if editing != nil {
-                        Button {
+                        PaybitchDestructiveButton(title: "Delete group") {
                             showDeleteConfirm = true
-                        } label: {
-                            Text("Delete group")
-                                .font(.spaceGrotesk(14, weight: .bold))
-                                .foregroundStyle(Paybitch.negative)
-                                .frame(maxWidth: .infinity)
-                                .padding(14)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                        .strokeBorder(Paybitch.negative.opacity(0.3), lineWidth: 1.5)
-                                )
                         }
-                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 16)

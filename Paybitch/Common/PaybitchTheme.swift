@@ -8,9 +8,8 @@ import SwiftUI
 /// Paybitch design tokens — colors, typography, radii, shadows.
 enum Paybitch {
 
-    // MARK: Brand colors (asset-backed)
+    // MARK: Brand accent (asset-backed) — the single accent in the neutral palette
     static let pink = Color.brandPink   // #FF5097
-    static let lime = Color.brandLime   // #E4F482
 
     // MARK: Adaptive surfaces (light/dark)
     static let bg = Color("Bg")

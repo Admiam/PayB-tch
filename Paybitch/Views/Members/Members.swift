@@ -41,7 +41,7 @@ let avatarColors: [Color] = [
     Color(red: 0.780, green: 0.357, blue: 1.0),    // #C75BFF
     Color(red: 0.882, green: 0.345, blue: 1.0),    // #E158FF
     Color(red: 1.0, green: 0.694, blue: 0.239),    // #FFB13D
-    Color(red: 0.894, green: 0.957, blue: 0.510),  // #E4F482
+    Color(red: 0.298, green: 0.776, blue: 0.741),  // #4CC6BD teal (was lime)
     Color(red: 1.0, green: 0.541, blue: 0.239),    // #FF8A3D
 ]
 

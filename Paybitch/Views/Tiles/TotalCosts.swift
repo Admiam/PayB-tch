@@ -21,8 +21,7 @@ struct TotalCosts: View {
             currencySymbol: currency.symbol,
             sub: sub,
             ratio: 0,
-            background: Paybitch.tile3,
-            foreground: Paybitch.textPrimary,
+            amountColor: Paybitch.textPrimary,
             icon: { Image(systemName: "doc.text.fill").font(.system(size: 18, weight: .bold)) }
         )
     }

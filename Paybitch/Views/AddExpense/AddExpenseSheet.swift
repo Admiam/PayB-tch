@@ -120,20 +120,9 @@ struct AddExpenseSheet: View {
                     }
 
                     if editing != nil {
-                        Button {
+                        PaybitchDestructiveButton(title: "Delete expense") {
                             showDeleteConfirm = true
-                        } label: {
-                            Label("Delete expense", systemImage: "trash")
-                                .font(.spaceGrotesk(14, weight: .bold))
-                                .foregroundStyle(Paybitch.negative)
-                                .frame(maxWidth: .infinity)
-                                .padding(14)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                        .strokeBorder(Paybitch.negative.opacity(0.3), lineWidth: 1.5)
-                                )
                         }
-                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 16)

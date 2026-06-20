@@ -39,24 +39,12 @@ struct OnboardingView: View {
 
     @ViewBuilder
     private var background: some View {
-        if step == 2 {
-            LinearGradient(
-                colors: [Paybitch.lime, Paybitch.pink],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+        ZStack {
+            Paybitch.bg
+            RadialGradient(
+                colors: [Paybitch.pink.opacity(step == 2 ? 0.22 : 0.14), .clear],
+                center: .topTrailing, startRadius: 0, endRadius: 500
             )
-        } else {
-            ZStack {
-                Paybitch.bg
-                RadialGradient(
-                    colors: [Paybitch.pink.opacity(0.3), .clear],
-                    center: .topTrailing, startRadius: 0, endRadius: 500
-                )
-                RadialGradient(
-                    colors: [Paybitch.lime.opacity(0.18), .clear],
-                    center: .bottomLeading, startRadius: 0, endRadius: 500
-                )
-            }
         }
     }
 
@@ -75,10 +63,7 @@ struct OnboardingView: View {
                 .font(.spaceGrotesk(60, weight: .heavy))
                 .tracking(-2)
                 .lineSpacing(-12)
-                .foregroundStyle(
-                    LinearGradient(colors: [Paybitch.pink, Paybitch.lime],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
+                .foregroundStyle(Paybitch.pink)
                 .rotationEffect(.degrees(-3))
 
             VStack(alignment: .leading, spacing: 12) {
@@ -123,38 +108,36 @@ struct OnboardingView: View {
             Text("Step 2 of 2")
                 .font(.spaceGrotesk(11, weight: .bold))
                 .tracking(1.5)
-                .foregroundStyle(.black.opacity(0.5))
+                .foregroundStyle(Paybitch.textMuted)
                 .textCase(.uppercase)
             Text("Hey \(profileName).\nName your first group.")
                 .font(.spaceGrotesk(36, weight: .heavy))
                 .tracking(-1)
-                .foregroundStyle(Color(red: 0.102, green: 0.039, blue: 0.094))
-            TextField(text: $groupName, prompt: Text("e.g. Roommates").foregroundStyle(.black.opacity(0.4))) {
+                .foregroundStyle(Paybitch.textPrimary)
+            TextField(text: $groupName, prompt: Text("e.g. Roommates").foregroundStyle(Paybitch.textMuted)) {
                 Text("")
             }
             .textInputAutocapitalization(.words)
             .font(.spaceGrotesk(22, weight: .bold))
-            .foregroundStyle(Color(red: 0.102, green: 0.039, blue: 0.094))
+            .foregroundStyle(Paybitch.textPrimary)
             .padding(22)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous).fill(.black.opacity(0.15))
+                RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Paybitch.card)
             )
 
             HStack(spacing: 8) {
                 ForEach(Currency.allCases) { c in
+                    let selected = groupCurrency == c
                     Button {
                         groupCurrency = c
                     } label: {
                         Text("\(c.rawValue) \(c.symbol)")
                             .font(.spaceGrotesk(13, weight: .bold))
-                            .foregroundStyle(groupCurrency == c ? .white : .black)
+                            .foregroundStyle(selected ? .white : Paybitch.textPrimary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(
-                                Capsule().fill(groupCurrency == c ? .black : .black.opacity(0.1))
-                            )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PaybitchGlassButton(kind: selected ? .accent : .neutral, shape: Capsule()))
                 }
             }
         }
@@ -182,7 +165,7 @@ struct OnboardingView: View {
                 }
                 Button("Skip for now") { finish() }
                     .font(.spaceGrotesk(13, weight: .bold))
-                    .foregroundStyle(.black.opacity(0.6))
+                    .foregroundStyle(Paybitch.textMuted)
             }
         }
     }
@@ -193,18 +176,18 @@ struct OnboardingView: View {
             Text(title)
                 .font(.spaceGrotesk(18, weight: .heavy))
                 .tracking(0.2)
+                .foregroundStyle(filled ? .white : Paybitch.pink)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
-                .background(
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .fill(filled ? Paybitch.pink : Color(red: 0.102, green: 0.039, blue: 0.094))
-                )
-                .foregroundStyle(filled ? .white : Paybitch.lime)
-                .opacity(disabled ? 0.4 : 1)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(
+            PaybitchGlassButton(
+                kind: filled ? .accent : .neutral,
+                shape: RoundedRectangle(cornerRadius: 22, style: .continuous),
+                dimmed: disabled
+            )
+        )
         .disabled(disabled)
-        .paybitchShadow(filled ? Paybitch.Shadow.pinkGlow : ShadowStyle(color: .black.opacity(0.3), radius: 16, x: 0, y: 8))
     }
 
     private func saveProfile() async {

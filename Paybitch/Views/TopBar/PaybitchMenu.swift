@@ -35,12 +35,12 @@ struct PaybitchMenuButton: View {
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: 22, weight: .bold))
                 .frame(width: 44, height: 44)
-                .foregroundStyle(Paybitch.pink)
-                .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Paybitch.chipBg)
+                .foregroundStyle(Paybitch.textPrimary)
+                .glassEffect(
+                    .regular.interactive(),
+                    in: RoundedRectangle(cornerRadius: Paybitch.radiusButton, style: .continuous)
                 )
         }
-        .menuStyle(.button)
         .accessibilityLabel("Menu")
     }
 }

@@ -110,24 +110,23 @@ struct SettingsSheet: View {
     @ViewBuilder
     private var appearanceSegmented: some View {
         let options = AppearanceMode.allCases
-        HStack(spacing: 4) {
-            ForEach(options) { mode in
-                let active = appearanceBinding.wrappedValue == mode
-                Button {
-                    appearanceBinding.wrappedValue = mode
-                } label: {
-                    Text(mode.label)
-                        .font(.spaceGrotesk(13, weight: .bold))
-                        .foregroundStyle(active ? .white : Paybitch.textPrimary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(Capsule().fill(active ? Paybitch.pink : Color.clear))
+        GlassEffectContainer(spacing: 4) {
+            HStack(spacing: 4) {
+                ForEach(options) { mode in
+                    let active = appearanceBinding.wrappedValue == mode
+                    Button {
+                        appearanceBinding.wrappedValue = mode
+                    } label: {
+                        Text(mode.label)
+                            .font(.spaceGrotesk(13, weight: .bold))
+                            .foregroundStyle(active ? .white : Paybitch.textPrimary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                    }
+                    .buttonStyle(PaybitchGlassButton(kind: active ? .accent : .neutral, shape: Capsule()))
                 }
-                .buttonStyle(.plain)
             }
         }
-        .padding(4)
-        .background(Capsule().fill(Paybitch.chipBg))
     }
 
     @ViewBuilder
@@ -208,10 +207,7 @@ struct SettingsSheet: View {
             Text("paybitch")
                 .font(.spaceGrotesk(32, weight: .heavy))
                 .tracking(-1)
-                .foregroundStyle(
-                    LinearGradient(colors: [Paybitch.pink, Paybitch.lime],
-                                   startPoint: .leading, endPoint: .trailing)
-                )
+                .foregroundStyle(Paybitch.pink)
                 .rotationEffect(.degrees(-3))
             Text("v\(appVersion) · sweet & sour math")
                 .font(.spaceGrotesk(11))

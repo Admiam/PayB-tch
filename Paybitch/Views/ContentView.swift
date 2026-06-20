@@ -169,25 +169,17 @@ struct ContentView: View {
 
 struct PaybitchFAB: View {
     let action: () -> Void
-    @State private var pressed = false
 
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
-                .font(.system(size: 28, weight: .heavy))
+                .font(.system(size: 26, weight: .heavy))
                 .foregroundStyle(.white)
                 .frame(width: 64, height: 64)
-                .background(Circle().fill(Paybitch.pink))
-                .scaleEffect(pressed ? 0.92 : 1)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PaybitchGlassButton(kind: .accent, shape: Circle()))
         .paybitchShadow(Paybitch.Shadow.pinkFab)
         .accessibilityLabel("Add expense")
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in pressed = true }
-                .onEnded { _ in pressed = false }
-        )
     }
 }
 
@@ -221,17 +213,8 @@ private struct EmptyExpensesCard: View {
                 .frame(maxWidth: 240)
                 .padding(.top, 6)
 
-            Button(action: onAdd) {
-                Text("+ Add first expense")
-                    .font(.spaceGrotesk(14, weight: .heavy))
-                    .tracking(0.3)
-                    .foregroundStyle(Paybitch.lime)
-                    .padding(.horizontal, 22)
-                    .padding(.vertical, 12)
-                    .background(Capsule().fill(Color(red: 0.102, green: 0.039, blue: 0.094)))
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 18)
+            PaybitchPrimaryButton(title: "+ Add first expense", action: onAdd)
+                .padding(.top, 18)
         }
         .frame(maxWidth: .infinity)
         .padding(28)
@@ -249,20 +232,16 @@ private struct AllSquaredCard: View {
             Text("All squared up")
                 .font(.spaceGrotesk(18, weight: .heavy))
                 .tracking(-0.3)
+                .foregroundStyle(Paybitch.textPrimary)
             Text("Nobody owes anybody. Nice.")
                 .font(.spaceGrotesk(13))
-                .opacity(0.7)
+                .foregroundStyle(Paybitch.textMuted)
         }
-        .foregroundStyle(Color(red: 0.102, green: 0.039, blue: 0.094))
         .frame(maxWidth: .infinity)
         .padding(18)
-        .background(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(LinearGradient(
-                    colors: [Paybitch.lime, Color(red: 0.722, green: 0.839, blue: 0.353)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
+        .glassEffect(
+            .regular.tint(Paybitch.positive.opacity(0.35)),
+            in: RoundedRectangle(cornerRadius: 22, style: .continuous)
         )
         .padding(.horizontal, 16)
         .padding(.top, 14)

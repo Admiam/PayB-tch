@@ -2,8 +2,8 @@
 //  PaybitchBackground.swift
 //  Paybitch
 //
-//  Brand bg: dark/light base, two ambient radial glows (pink top-right,
-//  lime bottom-left), subtle dot pattern overlay.
+//  Neutral bg: dark/light base, a single faint pink accent glow (top-right),
+//  subtle dot pattern overlay.
 //
 
 import SwiftUI
@@ -26,26 +26,17 @@ private struct PaybitchBackgroundModifier: ViewModifier {
 private struct AmbientGlow: View {
     @Environment(\.colorScheme) private var scheme
 
-    private var pinkOpacity: Double { scheme == .dark ? 0.30 : 0.18 }
-    private var limeOpacity: Double { scheme == .dark ? 0.18 : 0.22 }
+    /// A single, restrained pink accent glow — keeps the canvas neutral.
+    private var pinkOpacity: Double { scheme == .dark ? 0.16 : 0.09 }
 
     var body: some View {
         GeometryReader { geo in
-            ZStack {
-                RadialGradient(
-                    colors: [Paybitch.pink.opacity(pinkOpacity), .clear],
-                    center: .topTrailing,
-                    startRadius: 0,
-                    endRadius: max(geo.size.width, geo.size.height) * 0.7
-                )
-                RadialGradient(
-                    colors: [Paybitch.lime.opacity(limeOpacity), .clear],
-                    center: .bottomLeading,
-                    startRadius: 0,
-                    endRadius: max(geo.size.width, geo.size.height) * 0.7
-                )
-            }
-            .blendMode(.plusLighter)
+            RadialGradient(
+                colors: [Paybitch.pink.opacity(pinkOpacity), .clear],
+                center: .topTrailing,
+                startRadius: 0,
+                endRadius: max(geo.size.width, geo.size.height) * 0.7
+            )
             .allowsHitTesting(false)
         }
     }
