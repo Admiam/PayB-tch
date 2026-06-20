@@ -6,7 +6,8 @@
 //
 import Foundation
 
-struct Member: Codable, Identifiable {
+struct Member: Codable, Identifiable, Hashable, Sendable {
     let id: String
     let name: String
+    let imageUrl: String?
 }

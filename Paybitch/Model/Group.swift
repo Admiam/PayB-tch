@@ -2,13 +2,23 @@
 //  Group.swift
 //  Paybitch
 //
-//  Created by Adam Míka on 02.08.2025.
-//
 import Foundation
 
-struct Group: Codable, Identifiable, Hashable {
+struct Group: Codable, Identifiable, Hashable, Sendable {
     let id: String
-    let name: String
-    let memberIds: [String]
-    let defaultCurrency: String
+    var name: String
+    var memberIds: [String]
+    var defaultCurrency: String
+
+    init(
+        id: String = UUID().uuidString,
+        name: String,
+        memberIds: [String] = [],
+        defaultCurrency: String = Currency.default.rawValue
+    ) {
+        self.id = id
+        self.name = name
+        self.memberIds = memberIds
+        self.defaultCurrency = defaultCurrency
+    }
 }

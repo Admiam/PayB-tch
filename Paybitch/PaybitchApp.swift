@@ -2,19 +2,28 @@
 //  PaybitchApp.swift
 //  Paybitch
 //
-//  Created by Adam Míka on 01.08.2025.
-//
 
 import SwiftUI
 
 @main
 struct PaybitchApp: App {
-    @StateObject private var modelData = ModelData()
+    @State private var modelData = ModelData()
+    @AppStorage(AppStorageKey.appearance) private var appearanceRaw: String = AppearanceMode.system.rawValue
+
+    init() {
+        PaybitchFonts.register()
+    }
+
+    private var appearance: AppearanceMode {
+        AppearanceMode(rawValue: appearanceRaw) ?? .system
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(modelData)
+                .environment(modelData)
+                .preferredColorScheme(appearance.preferredColorScheme)
+                .tint(Paybitch.pink)
         }
     }
 }
