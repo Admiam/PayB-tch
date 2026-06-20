@@ -46,6 +46,7 @@ struct ExpenseDetailView: View {
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+            .paybitchAppearance()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     PaybitchCloseButton { dismiss() }

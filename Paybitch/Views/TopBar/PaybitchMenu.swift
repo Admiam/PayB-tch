@@ -16,7 +16,6 @@ struct PaybitchMenuButton: View {
     let onAddGroup: () -> Void
     let onEditGroup: () -> Void
     let onSearch: () -> Void
-    let onExport: () -> Void
 
     var body: some View {
         Menu {
@@ -28,7 +27,6 @@ struct PaybitchMenuButton: View {
             if hasSelectedGroup {
                 Button { onSearch() } label: { Label("Search activity", systemImage: "magnifyingglass") }
             }
-            Button { onExport() } label: { Label("Export JSON", systemImage: "square.and.arrow.up") }
             Divider()
             Button { onSettings() } label: { Label("Settings", systemImage: "gearshape") }
         } label: {

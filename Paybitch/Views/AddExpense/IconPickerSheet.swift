@@ -29,6 +29,7 @@ struct IconPickerSheet: View {
                 .padding(.bottom, 40)
             }
             .background(Paybitch.bg.ignoresSafeArea())
+            .paybitchAppearance()
             .navigationTitle("Pick icon")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

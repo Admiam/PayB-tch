@@ -13,7 +13,6 @@ struct TopBar: View {
     let onAddGroup: () -> Void
     let onEditGroup: () -> Void
     let onSearch: () -> Void
-    let onExport: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -24,8 +23,7 @@ struct TopBar: View {
                 onSettings: onSettings,
                 onAddGroup: onAddGroup,
                 onEditGroup: onEditGroup,
-                onSearch: onSearch,
-                onExport: onExport
+                onSearch: onSearch
             )
         }
         .padding(.horizontal, 16)

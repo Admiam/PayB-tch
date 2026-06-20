@@ -129,6 +129,7 @@ struct AddExpenseSheet: View {
                 .padding(.bottom, 60)
             }
             .background(Paybitch.bg.ignoresSafeArea())
+            .paybitchAppearance()
             .navigationTitle(editing == nil ? "New expense" : "Edit expense")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -237,20 +238,21 @@ struct AddExpenseSheet: View {
             paidBy = m.id
         } label: {
             VStack(spacing: 6) {
-                PaybitchAvatar(member: m, size: 40, isMe: model.currentUserId == m.id)
+                PaybitchAvatar(member: m, size: 40, isMe: model.currentUserId == m.id, showRing: selected)
                 Text(model.displayName(for: m.id))
                     .font(.spaceGrotesk(12, weight: .bold))
-                    .foregroundStyle(selected ? .white : Paybitch.textPrimary)
+                    .foregroundStyle(selected ? Paybitch.pink : Paybitch.textPrimary)
             }
             .frame(minWidth: 64)
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
-            .background(
+            .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(selected ? Paybitch.pink : Color.clear)
+                    .strokeBorder(selected ? Paybitch.pink : Color.clear, lineWidth: 2)
             )
         }
         .buttonStyle(.plain)
+        .animation(.snappy(duration: 0.2), value: selected)
     }
 
     private func setDefaults() {

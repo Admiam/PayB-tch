@@ -40,3 +40,21 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
         }
     }
 }
+
+extension View {
+    /// Applies the user's chosen appearance to this view tree. Needed on every
+    /// sheet/cover: `.preferredColorScheme` set on the app root does NOT
+    /// propagate into modally-presented sheets, so they'd otherwise ignore the
+    /// Light/Dark choice and only the main screen would update.
+    func paybitchAppearance() -> some View {
+        modifier(PaybitchAppearanceModifier())
+    }
+}
+
+private struct PaybitchAppearanceModifier: ViewModifier {
+    @AppStorage(AppStorageKey.appearance) private var raw = AppearanceMode.system.rawValue
+
+    func body(content: Content) -> some View {
+        content.preferredColorScheme((AppearanceMode(rawValue: raw) ?? .system).preferredColorScheme)
+    }
+}

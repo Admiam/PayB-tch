@@ -42,8 +42,7 @@ struct ContentView: View {
                         onSettings: { showSettings = true },
                         onAddGroup: { showAddGroup = true },
                         onEditGroup: { if let g = liveSelectedGroup { editingGroup = g } },
-                        onSearch: { if let g = liveSelectedGroup { path.append(.activity(groupId: g.id)) } },
-                        onExport: { showSettings = true }
+                        onSearch: { if let g = liveSelectedGroup { path.append(.activity(groupId: g.id)) } }
                     )
                     GroupChipsRow(
                         selectedId: $selectedGroupId,

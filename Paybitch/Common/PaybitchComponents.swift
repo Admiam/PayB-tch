@@ -56,10 +56,7 @@ struct GroupChip: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(isActive ? Color.white : Paybitch.pink)
-                    .frame(width: 6, height: 6)
+            HStack(spacing: 6) {
                 Text(name)
                     .font(.spaceGrotesk(14, weight: .bold))
                     .tracking(-0.2)

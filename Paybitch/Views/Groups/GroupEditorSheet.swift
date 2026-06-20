@@ -127,6 +127,7 @@ struct GroupEditorSheet: View {
                 .padding(.bottom, 60)
             }
             .background(Paybitch.bg.ignoresSafeArea())
+            .paybitchAppearance()
             .navigationTitle(editing == nil ? "New group" : "Edit group")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

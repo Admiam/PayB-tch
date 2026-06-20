@@ -14,6 +14,7 @@ struct SettingsSheet: View {
     @State private var addingMember = false
     @State private var editingMember: Member?
     @State private var profilePickerShown = false
+    @Namespace private var segNamespace
 
     private var appearanceBinding: Binding<AppearanceMode> {
         Binding(
@@ -56,35 +57,18 @@ struct SettingsSheet: View {
                         }
                     }
 
-                    PaybitchFieldGroup(label: "Data") {
-                        VStack(spacing: 0) {
-                            if let url = exportURL {
-                                ShareLink(item: url) {
-                                    HStack(spacing: 12) {
-                                        Text("Export as JSON")
-                                            .font(.spaceGrotesk(16, weight: .semibold))
-                                            .foregroundStyle(Paybitch.textPrimary)
-                                        Spacer()
-                                        chevron
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 14)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            Divider().background(Paybitch.divider)
-                            HStack(spacing: 12) {
-                                Text("Version")
-                                    .font(.spaceGrotesk(16, weight: .semibold))
-                                    .foregroundStyle(Paybitch.textPrimary)
-                                Spacer()
-                                Text(appVersion)
-                                    .font(.spaceGrotesk(14, weight: .semibold))
-                                    .foregroundStyle(Paybitch.textMuted)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
+                    PaybitchFieldGroup(label: "About") {
+                        HStack(spacing: 12) {
+                            Text("Version")
+                                .font(.spaceGrotesk(16, weight: .semibold))
+                                .foregroundStyle(Paybitch.textPrimary)
+                            Spacer()
+                            Text(appVersion)
+                                .font(.spaceGrotesk(14, weight: .semibold))
+                                .foregroundStyle(Paybitch.textMuted)
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
                     }
 
                     wordmarkBlock
@@ -103,6 +87,7 @@ struct SettingsSheet: View {
                 }
                 .sharedBackgroundVisibility(.hidden)
             }
+            .paybitchAppearance()
             .sheet(isPresented: $addingMember) { AddMemberSheet(editing: nil) }
             .sheet(item: $editingMember) { m in AddMemberSheet(editing: m) }
         }
@@ -110,24 +95,33 @@ struct SettingsSheet: View {
 
     @ViewBuilder
     private var appearanceSegmented: some View {
-        let options = AppearanceMode.allCases
-        GlassEffectContainer(spacing: 4) {
-            HStack(spacing: 4) {
-                ForEach(options) { mode in
-                    let active = appearanceBinding.wrappedValue == mode
-                    Button {
+        HStack(spacing: 0) {
+            ForEach(AppearanceMode.allCases) { mode in
+                let active = appearanceBinding.wrappedValue == mode
+                Button {
+                    withAnimation(.snappy(duration: 0.28)) {
                         appearanceBinding.wrappedValue = mode
-                    } label: {
-                        Text(mode.label)
-                            .font(.spaceGrotesk(13, weight: .bold))
-                            .foregroundStyle(active ? .white : Paybitch.textPrimary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
                     }
-                    .buttonStyle(PaybitchGlassButton(kind: active ? .accent : .neutral, shape: Capsule()))
+                } label: {
+                    Text(mode.label)
+                        .font(.spaceGrotesk(13, weight: .bold))
+                        .foregroundStyle(active ? .white : Paybitch.textPrimary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background {
+                            if active {
+                                Capsule()
+                                    .fill(Paybitch.pink)
+                                    .matchedGeometryEffect(id: "segActive", in: segNamespace)
+                            }
+                        }
+                        .contentShape(Capsule())
                 }
+                .buttonStyle(.plain)
             }
         }
+        .padding(4)
+        .background(Capsule().fill(Paybitch.chipBg))
     }
 
     @ViewBuilder
@@ -221,41 +215,5 @@ struct SettingsSheet: View {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
         return "\(v) (\(b))"
-    }
-
-    private var exportURL: URL? {
-        guard !model.expenses.isEmpty || !model.groups.isEmpty || !model.members.isEmpty else {
-            return nil
-        }
-        let snapshot = ExportSnapshot(
-            members: model.members,
-            groups: model.groups,
-            expenses: model.expenses
-        )
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        encoder.dateEncodingStrategy = .iso8601
-        guard let data = try? encoder.encode(snapshot) else { return nil }
-
-        let stamp = ISO8601DateFormatter().string(from: .now)
-            .replacingOccurrences(of: ":", with: "-")
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("paybitch-\(stamp).json")
-        try? data.write(to: url, options: .atomic)
-        return url
-    }
-}
-
-private struct ExportSnapshot: Codable {
-    let members: [Member]
-    let groups: [Group]
-    let expenses: [Expense]
-    let exportedAt: Date
-
-    init(members: [Member], groups: [Group], expenses: [Expense]) {
-        self.members = members
-        self.groups = groups
-        self.expenses = expenses
-        self.exportedAt = .now
     }
 }

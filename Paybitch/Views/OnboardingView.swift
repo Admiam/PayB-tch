@@ -35,6 +35,7 @@ struct OnboardingView: View {
             .padding(.top, 60)
         }
         .interactiveDismissDisabled()
+        .paybitchAppearance()
     }
 
     @ViewBuilder

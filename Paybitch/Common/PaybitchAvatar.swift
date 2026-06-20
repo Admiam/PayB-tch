@@ -8,6 +8,19 @@
 
 import SwiftUI
 
+/// Curated set of fun, monochrome SF Symbols selectable as a profile picture.
+enum AvatarIcon {
+    static let symbols: [String] = [
+        "face.smiling", "star.fill", "heart.fill", "bolt.fill",
+        "flame.fill", "leaf.fill", "moon.fill", "sun.max.fill",
+        "crown.fill", "gift.fill", "gamecontroller.fill", "guitars.fill",
+        "pawprint.fill", "hare.fill", "tortoise.fill", "ladybug.fill",
+        "ant.fill", "fish.fill", "bird.fill", "balloon.fill",
+        "party.popper.fill", "bicycle", "car.fill", "airplane",
+        "sailboat.fill", "basketball.fill", "soccerball", "camera.fill",
+    ]
+}
+
 struct PaybitchAvatar: View {
     let member: Member
     var size: CGFloat = 48
@@ -45,7 +58,13 @@ struct PaybitchAvatar: View {
 
     @ViewBuilder
     private var base: some View {
-        if let urlString = member.imageUrl, let url = URL(string: urlString) {
+        if let symbol = member.iconSymbol, !symbol.isEmpty {
+            Image(systemName: symbol)
+                .font(.system(size: size * 0.46, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(Circle().fill(Color.palette(for: member.id)))
+        } else if let urlString = member.imageUrl, let url = URL(string: urlString) {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let img):
