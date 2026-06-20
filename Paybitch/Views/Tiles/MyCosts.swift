@@ -22,7 +22,7 @@ struct MyCosts: View {
             currencySymbol: currency.symbol,
             sub: sub,
             ratio: ratio,
-            amountColor: Paybitch.pink,
+            amountColor: Paybitch.textPrimary,
             icon: { Image(systemName: "wallet.bifold.fill").font(.system(size: 18, weight: .bold)) }
         )
     }

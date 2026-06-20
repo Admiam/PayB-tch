@@ -26,7 +26,7 @@ struct IOwed: View {
             currencySymbol: currency.symbol,
             sub: sub,
             ratio: ratio,
-            amountColor: isOwedToMe ? Paybitch.positive : Paybitch.negative,
+            amountColor: Paybitch.pink,
             isBig: true,
             icon: { Image(systemName: icon).font(.system(size: 20, weight: .bold)) }
         )
