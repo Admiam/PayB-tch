@@ -238,7 +238,7 @@ struct AddExpenseSheet: View {
             paidBy = m.id
         } label: {
             VStack(spacing: 6) {
-                PaybitchAvatar(member: m, size: 40, isMe: model.currentUserId == m.id, showRing: selected)
+                PaybitchAvatar(member: m, size: 40, isMe: model.currentUserId == m.id)
                 Text(model.displayName(for: m.id))
                     .font(.spaceGrotesk(12, weight: .bold))
                     .foregroundStyle(selected ? Paybitch.pink : Paybitch.textPrimary)
