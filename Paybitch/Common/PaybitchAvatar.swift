@@ -9,14 +9,19 @@
 import SwiftUI
 
 /// Curated set of fun, monochrome SF Symbols selectable as a profile picture.
+/// Cute animals lead — cats & friends — so it reads like a playful avatar set.
 enum AvatarIcon {
     static let symbols: [String] = [
-        "face.smiling", "star.fill", "heart.fill", "bolt.fill",
-        "flame.fill", "leaf.fill", "moon.fill", "sun.max.fill",
-        "crown.fill", "gift.fill", "gamecontroller.fill", "guitars.fill",
-        "pawprint.fill", "hare.fill", "tortoise.fill", "ladybug.fill",
-        "ant.fill", "fish.fill", "bird.fill", "balloon.fill",
-        "party.popper.fill", "bicycle", "car.fill", "airplane",
+        // Cute animals first
+        "cat.fill", "dog.fill", "teddybear.fill", "pawprint.fill",
+        "hare.fill", "tortoise.fill", "bird.fill", "fish.fill",
+        "lizard.fill", "ladybug.fill", "ant.fill", "leaf.fill",
+        // Faces & fun
+        "face.smiling", "star.fill", "heart.fill", "crown.fill",
+        "bolt.fill", "flame.fill", "moon.fill", "sun.max.fill",
+        "gift.fill", "balloon.fill", "party.popper.fill", "gamecontroller.fill",
+        // Hobbies & travel
+        "guitars.fill", "bicycle", "car.fill", "airplane",
         "sailboat.fill", "basketball.fill", "soccerball", "camera.fill",
     ]
 }
