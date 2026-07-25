@@ -1,0 +1,73 @@
+# Local dev + the Hetzner-exit topology (§6, EXT-D8i/l). `docker compose up` runs postgres + api.
+# Migrations are a DISCRETE pre-traffic step (never migrate-on-startup, §6): run the one-shot `migrate`
+# service FIRST, then bring up `api`:
+#
+#   docker compose up -d postgres
+#   docker compose run --rm migrate          # applies the EF schema to an empty/updated DB
+#   docker compose up -d api
+#
+services:
+  postgres:
+    image: postgres:16
+    container_name: paybitch-pg
+    environment:
+      POSTGRES_USER: paybitch
+      POSTGRES_PASSWORD: paybitch
+      POSTGRES_DB: paybitch
+    ports:
+      - "5544:5432"   # 5432/5433 are often taken locally; the app's dev conn string uses 5544
+    volumes:
+      - paybitch-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paybitch"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # The application image (multi-stage Dockerfile → chiseled non-root aspnet, §6). Talks to the postgres
+  # service over the compose network (its in-container port is 5432; the 5544 mapping above is host-only).
+  api:
+    build: .
+    container_name: paybitch-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=paybitch;Username=paybitch;Password=paybitch"
+      # SECRETS (JWT signing keys carried across the exit — EXT-D8l; Apple .p8 / client-secret; and, once a
+      # 2nd instance ships, RateLimiting__PartitionHmacKey — EXT-D8b) are injected via env / a secret manager,
+      # NEVER committed here (§6, §8.7). Supply them locally with an untracked env file:
+      #   env_file: [ .env.local ]
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  # One-shot EF migrator (discrete deploy step, §6). Not started by `docker compose up` (profile-gated); run
+  # it explicitly with `docker compose run --rm migrate`. In production the equivalent is the self-contained
+  # EF *bundle* built in CI (`dotnet ef migrations bundle`) and executed on the target host before traffic —
+  # see ops/HETZNER_EXIT_RUNBOOK.md. DesignTimeDbContextFactory reads PAYBITCH_DB.
+  migrate:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /src
+    profiles: ["migrate"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PAYBITCH_DB: "Host=postgres;Port=5432;Database=paybitch;Username=paybitch;Password=paybitch"
+    volumes:
+      - ./:/src
+    entrypoint:
+      - bash
+      - -c
+      - |
+        dotnet tool install --global dotnet-ef --version 10.* && \
+        /root/.dotnet/tools/dotnet-ef database update \
+          --project src/Paybitch.Infrastructure \
+          --startup-project src/Paybitch.Api
+    restart: "no"
+
+volumes:
+  paybitch-pgdata:
