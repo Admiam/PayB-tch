@@ -1,0 +1,95 @@
+# iOS CI — build + unit tests on every PR and on the long-lived branches.
+#
+# Runs on a macOS runner, which bills at 10x the Linux rate on GitHub-hosted minutes. The path filter
+# below keeps it off backend-only changes; keep it that way.
+name: ios-ci
+
+on:
+  pull_request:
+    branches: [main, dev, test]
+    paths:
+      - "Paybitch/**"
+      - "PaybitchTests/**"
+      - "PaybitchUITests/**"
+      - "Paybitch.xcodeproj/**"
+      - ".github/workflows/ios-ci.yml"
+  push:
+    branches: [main, dev, test]
+    paths:
+      - "Paybitch/**"
+      - "PaybitchTests/**"
+      - "PaybitchUITests/**"
+      - "Paybitch.xcodeproj/**"
+      - ".github/workflows/ios-ci.yml"
+
+concurrency:
+  group: ios-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: build + unit tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes | grep iOS || true
+
+      # The project targets iOS 26 and depends unconditionally on .glassEffect /
+      # .sharedBackgroundVisibility, so it cannot fall back to an older runtime. Resolve a concrete
+      # iPhone rather than hardcoding a model name, which drifts between runner images.
+      - name: resolve simulator
+        id: sim
+        run: |
+          set -euo pipefail
+          udid=$(xcrun simctl list devices available --json \
+            | python3 -c 'import json,sys
+data = json.load(sys.stdin)["devices"]
+best = None
+for runtime, devices in data.items():
+    if "iOS" not in runtime:
+        continue
+    for d in devices:
+        if d.get("isAvailable") and d["name"].startswith("iPhone"):
+            best = (runtime, d["udid"], d["name"])
+if not best:
+    sys.exit("No available iPhone simulator on this runner")
+print(best[1])')
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          echo "Using simulator $udid"
+
+      - name: build
+        run: |
+          xcodebuild -project Paybitch.xcodeproj -scheme Paybitch \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            build
+
+      # Unit tests only. The UI test target takes minutes on a macOS runner and covers no money logic;
+      # add it to a nightly schedule if it ever earns its keep.
+      - name: unit tests
+        run: |
+          xcodebuild -project Paybitch.xcodeproj -scheme Paybitch \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -only-testing:PaybitchTests \
+            -resultBundlePath TestResults.xcresult \
+            test
+
+      - name: test summary
+        if: always()
+        run: |
+          if [ -d TestResults.xcresult ]; then
+            xcrun xcresulttool get test-results summary --path TestResults.xcresult || true
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ios-test-results
+          path: TestResults.xcresult
+          retention-days: 7
