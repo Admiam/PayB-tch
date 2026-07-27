@@ -39,14 +39,14 @@ private struct MemberCrewChip: View {
     let isMe: Bool
 
     private var color: Color {
-        if net > 0.01 { return Paybitch.positive }
-        if net < -0.01 { return Paybitch.negative }
+        if net > currency.epsilon { return Paybitch.positive }
+        if net < -currency.epsilon { return Paybitch.negative }
         return Paybitch.textMuted
     }
 
     private var prefix: String {
-        if net > 0.01 { return "+" }
-        if net < -0.01 { return "−" }
+        if net > currency.epsilon { return "+" }
+        if net < -currency.epsilon { return "−" }
         return ""
     }
 

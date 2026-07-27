@@ -53,7 +53,7 @@ struct AddExpenseSheet: View {
         case .exact:
             guard let a = amount else { return false }
             let sum = splitAmong.reduce(Decimal.zero) { $0 + (exactAmounts[$1] ?? 0) }
-            return (a - sum).magnitude < Decimal(string: "0.01")!
+            return (a - sum).magnitude < currency.epsilon
         case .shares:
             return splitAmong.contains { (shareWeights[$0] ?? 0) > 0 }
         }
@@ -338,7 +338,7 @@ struct AddExpenseSheet: View {
                 amount: amount,
                 currency: currency,
                 paidBy: paidBy,
-                splitAmong: Array(splitAmong),
+                splitAmong: splitAmong.sorted(),
                 splitType: split,
                 date: date,
                 notes: trimmedNotes,
@@ -353,7 +353,7 @@ struct AddExpenseSheet: View {
                 amount: amount,
                 currency: currency,
                 paidBy: paidBy,
-                splitAmong: Array(splitAmong),
+                splitAmong: splitAmong.sorted(),
                 splitType: split,
                 date: date,
                 notes: trimmedNotes,

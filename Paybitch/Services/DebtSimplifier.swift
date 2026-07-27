@@ -16,6 +16,15 @@ struct DebtEdge: Hashable, Sendable, Identifiable {
 }
 
 enum DebtSimplifier {
+    /// Settle-up edges for balances denominated in `currency`.
+    ///
+    /// Prefer this over the raw-epsilon form: the threshold for "close enough to zero" depends on
+    /// the currency's minor unit. A hardcoded `0.01` treats a 0.4 Kč residue as a real debt, which
+    /// is how a group that is actually settled ends up showing a phantom transfer.
+    static func simplify(_ balances: [MemberBalance], in currency: Currency) -> [DebtEdge] {
+        simplify(balances, epsilon: currency.epsilon)
+    }
+
     static func simplify(
         _ balances: [MemberBalance],
         epsilon: Decimal = Decimal(string: "0.01") ?? 0

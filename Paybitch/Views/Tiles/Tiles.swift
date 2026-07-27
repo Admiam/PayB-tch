@@ -25,7 +25,7 @@ struct Tiles: View {
     }
 
     private var debts: [DebtEdge] {
-        DebtSimplifier.simplify(balances)
+        DebtSimplifier.simplify(balances, in: displayCurrency)
     }
 
     private var myNet: Decimal {

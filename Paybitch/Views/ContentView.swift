@@ -118,10 +118,10 @@ struct ContentView: View {
             in: displayCurrency,
             fx: model.fx
         )
-        let edges = DebtSimplifier.simplify(balances)
+        let edges = DebtSimplifier.simplify(balances, in: displayCurrency)
         let myNet: Decimal = balances.first { $0.memberId == model.currentUserId }?.net ?? 0
         let isEmpty = groupExpenses.isEmpty
-        let isSettled = !groupExpenses.isEmpty && myNet.magnitude < Decimal(string: "0.01")! && edges.isEmpty
+        let isSettled = !groupExpenses.isEmpty && myNet.magnitude < displayCurrency.epsilon && edges.isEmpty
 
         VStack(spacing: 0) {
             VStack(spacing: 10) {

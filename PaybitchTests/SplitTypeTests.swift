@@ -23,10 +23,12 @@ struct SplitTypeTests {
         let result = SplitType.equal.shares(total: total, among: members, roundedTo: 2)
         let sum = result.values.reduce(.zero, +)
         #expect(sum == total)
-        // Per-share rounded to 33.33 except last which absorbs the remainder.
-        #expect(result["a"] == Decimal(string: "33.33"))
+        // Largest-remainder (Hamilton): the leftover cent goes to the largest remainder, and on a
+        // three-way tie to the smallest ordinal id — not to whoever happens to be last in the
+        // array, which was both unfair and non-deterministic. Matches the server's Splitter.
+        #expect(result["a"] == Decimal(string: "33.34"))
         #expect(result["b"] == Decimal(string: "33.33"))
-        #expect(result["c"] == Decimal(string: "33.34"))
+        #expect(result["c"] == Decimal(string: "33.33"))
     }
 
     @Test("equal split with empty members returns empty")
@@ -60,11 +62,16 @@ struct SplitTypeTests {
         #expect(result["c"] == 50)
     }
 
-    @Test("shares with zero total weight returns empty")
+    @Test("shares with zero total weight still distributes the whole total")
     func sharesZeroWeight() {
+        // Returning [:] here used to mean the payer was credited while nobody was debited, so a
+        // degenerate weight vector minted money. With no information about proportions the only
+        // safe reading is an even split; the UI blocks saving such a split in the first place.
         let weights: [String: Int] = ["a": 0, "b": 0]
         let result = SplitType.shares(weights).shares(total: 100, among: ["a", "b"])
-        #expect(result.isEmpty)
+        #expect(result.values.reduce(.zero, +) == 100)
+        #expect(result["a"] == 50)
+        #expect(result["b"] == 50)
     }
 
     @Test("shares ignores members with weight 0")

@@ -22,7 +22,7 @@ struct DebtSummaryList: View {
             in: displayCurrency,
             fx: model.fx
         )
-        return DebtSimplifier.simplify(balances)
+        return DebtSimplifier.simplify(balances, in: displayCurrency)
     }
 
     var body: some View {

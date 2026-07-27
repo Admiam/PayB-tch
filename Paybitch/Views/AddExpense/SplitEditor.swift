@@ -99,7 +99,7 @@ struct SplitEditor: View {
     }
 
     private var deltaColor: Color {
-        exactDelta.magnitude < Decimal(string: "0.01")! ? .green : .red
+        exactDelta.magnitude < currency.epsilon ? .green : .red
     }
 
     @ViewBuilder
