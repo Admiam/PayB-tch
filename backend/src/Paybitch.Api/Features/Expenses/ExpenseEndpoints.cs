@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Paybitch.Api.Common.Auth;
 using Paybitch.Api.Common.Errors;
 using Paybitch.Api.Common.Pagination;
+using Paybitch.Api.Features.Activity;
 using Paybitch.Infrastructure;
 using Paybitch.Infrastructure.Abstractions;
 using Paybitch.Infrastructure.Entities;
@@ -28,6 +29,7 @@ public static class ExpenseEndpoints
         HttpContext http,
         AppDbContext db,
         IChangeLogWriter changeLog,
+        IActivityWriter activity,
         IClock clock,
         CancellationToken ct)
     {
@@ -64,6 +66,11 @@ public static class ExpenseEndpoints
 
         var writer = new ExpenseWriter(db, changeLog, clock);
         var created = writer.Stage(cmd);
+
+        // Same DbContext, same transaction as the mutation and its change_log row (§3.10). The D9
+        // replay paths return before reaching here, so a replayed create writes no second row; the
+        // unique-violation path below clears the tracker, discarding this row with the rest.
+        activity.Write(groupId, m.UserId, ActivityVerbs.ExpenseCreated, ActivityTargetTypes.Expense, created.Id);
 
         try
         {
@@ -174,6 +181,7 @@ public static class ExpenseEndpoints
         HttpContext http,
         AppDbContext db,
         IChangeLogWriter changeLog,
+        IActivityWriter activity,
         IClock clock,
         CancellationToken ct)
     {
@@ -232,11 +240,25 @@ public static class ExpenseEndpoints
             });
         }
 
+        // Field NAMES only — §3.10 / §4.3 forbid amounts or any other money value in activity metadata.
+        // Captured before the assignments below, while `expense` still holds the previous state.
+        var splitKind = SplitKind.Of(domainSplit);
+        var changedFields = new List<string>(9);
+        if (!string.Equals(expense.Title, request.Title, StringComparison.Ordinal)) changedFields.Add("title");
+        if (expense.AmountMinor != amountMinor) changedFields.Add("amount");
+        if (!string.Equals(expense.Currency, currency.Code, StringComparison.Ordinal)) changedFields.Add("currency");
+        if (expense.PaidBy != paidBy) changedFields.Add("paidBy");
+        if (!string.Equals(expense.SplitType, splitKind, StringComparison.Ordinal)) changedFields.Add("split");
+        if (expense.CategoryId != categoryId) changedFields.Add("category");
+        if (!string.Equals(expense.IconSymbol, request.IconSymbol, StringComparison.Ordinal)) changedFields.Add("iconSymbol");
+        if (expense.ExpenseDate != date) changedFields.Add("date");
+        if (!string.Equals(expense.Notes, request.Notes, StringComparison.Ordinal)) changedFields.Add("notes");
+
         expense.Title = request.Title!;
         expense.AmountMinor = amountMinor;
         expense.Currency = currency.Code;
         expense.PaidBy = paidBy;
-        expense.SplitType = SplitKind.Of(domainSplit);
+        expense.SplitType = splitKind;
         expense.CategoryId = categoryId;
         expense.IconSymbol = request.IconSymbol;
         expense.ExpenseDate = date;
@@ -244,6 +266,9 @@ public static class ExpenseEndpoints
         expense.Version += 1; // bump once per §3.2b
 
         changeLog.Append(groupId, ChangeLogEntityTypes.Expense, eid, isDelete: false);
+        activity.Write(
+            groupId, m.UserId, ActivityVerbs.ExpenseUpdated, ActivityTargetTypes.Expense, eid,
+            changedFields.Count > 0 ? new { fields = changedFields } : null);
 
         await db.SaveChangesAsync(ct);
         var newSplits = await SplitsOfAsync(db, eid, ct); // read inside the tx before commit
@@ -260,6 +285,7 @@ public static class ExpenseEndpoints
         HttpContext http,
         AppDbContext db,
         IChangeLogWriter changeLog,
+        IActivityWriter activity,
         IClock clock,
         CancellationToken ct)
     {
@@ -286,6 +312,8 @@ public static class ExpenseEndpoints
         expense.DeletedAt = clock.UtcNow;
         expense.Version += 1;
         changeLog.Append(groupId, ChangeLogEntityTypes.Expense, eid, isDelete: true);
+        // A replayed delete finds the tombstone and 404s above, so this row is written exactly once.
+        activity.Write(groupId, m.UserId, ActivityVerbs.ExpenseDeleted, ActivityTargetTypes.Expense, eid);
 
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
