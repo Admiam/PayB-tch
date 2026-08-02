@@ -60,7 +60,7 @@ struct GroupChip: View {
                 Text(name)
                     .font(.spaceGrotesk(14, weight: .bold))
                     .tracking(-0.2)
-                Text("· \(memberCount)")
+                Text("\(memberCount)")
                     .font(.spaceGrotesk(11, weight: .bold))
                     .opacity(0.6)
             }

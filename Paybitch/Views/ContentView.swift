@@ -37,17 +37,24 @@ struct ContentView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 0) {
-                    TopBar(
-                        hasSelectedGroup: liveSelectedGroup != nil,
-                        onSettings: { showSettings = true },
-                        onAddGroup: { showAddGroup = true },
-                        onEditGroup: { if let g = liveSelectedGroup { editingGroup = g } },
-                        onSearch: { if let g = liveSelectedGroup { path.append(.activity(groupId: g.id)) } }
-                    )
-                    GroupChipsRow(
-                        selectedId: $selectedGroupId,
-                        onAddGroup: { showAddGroup = true }
-                    )
+                    VStack(spacing: 0) {
+                        TopBar(
+                            hasSelectedGroup: liveSelectedGroup != nil,
+                            onSettings: { showSettings = true },
+                            onAddGroup: { showAddGroup = true },
+                            onEditGroup: { if let g = liveSelectedGroup { editingGroup = g } },
+                            onSearch: { if let g = liveSelectedGroup { path.append(.activity(groupId: g.id)) } }
+                        )
+                        GroupChipsRow(
+                            selectedId: $selectedGroupId,
+                            onAddGroup: { showAddGroup = true }
+                        )
+                    }
+                    // Opaque flat fill, painted over the ambient glow + dot pattern from
+                    // .paybitchBackground() below: through the header's Liquid Glass chips and
+                    // menu button, that gradient + high-frequency dot texture lensed into a
+                    // visible noisy warp. The header reads cleanest flat.
+                    .background(Paybitch.bg)
 
                     if let group = liveSelectedGroup {
                         groupContent(group: group)
