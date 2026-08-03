@@ -67,6 +67,11 @@ jobs:
         run: |
           dotnet tool install --global dotnet-ef --version 10.*
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+      # This is a separate job (fresh runner, fresh checkout) from build-test, so it needs its own
+      # restore — `dotnet ef` resolves the project via its obj/project.assets.json, which only a
+      # restore produces.
+      - name: restore
+        run: dotnet restore Paybitch.sln
       # Fails the PR if the EF model drifted from the committed migrations (a schema change with no
       # migration). Compares model ↔ snapshot only — no database connection needed.
       - name: assert no pending model changes
