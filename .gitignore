@@ -1,0 +1,59 @@
+# ── macOS ─────────────────────────────────────────────────────────────
+.DS_Store
+
+# ── Xcode / Swift ─────────────────────────────────────────────────────
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Package.resolved
+
+# ── .NET ──────────────────────────────────────────────────────────────
+# Build artifacts — the backend carries ~582 MB of these; never commit them.
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+project.lock.json
+artifacts/
+
+# ── Secrets ───────────────────────────────────────────────────────────
+# Config values live in appsettings; secrets come from the environment.
+.env
+.env.*
+!.env.example
+*.pfx
+*.p8
+*.p12
+appsettings.Local.json
+
+# ── Runtime / local data ──────────────────────────────────────────────
+# Filesystem blob store target (Blob:LocalRoot) and local uploads.
+backend/.blobs/
+backend/**/wwwroot/uploads/
+
+# ── Claude Code ───────────────────────────────────────────────────────
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+.claude/scheduled_tasks.json
+.claude/routines/.state/
+.claude/checkpoints/
+.claude/mailbox/
+.claude/agent-registry.json
+.claude/agent-memory-local/
+.claude/first-run
+.claude/assistant-daemon-state.json

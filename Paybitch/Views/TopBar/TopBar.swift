@@ -2,36 +2,32 @@
 //  TopBar.swift
 //  Paybitch
 //
-//  Created by Adam Míka on 04.08.2025.
+//  Header: paybitch wordmark + pink dot + menu button.
 //
 
 import SwiftUI
 
 struct TopBar: View {
-    @EnvironmentObject var model: ModelData
-    @Binding var selected: Group?
-    var onAddGroup: () -> Void
+    let hasSelectedGroup: Bool
+    let onSettings: () -> Void
+    let onAddGroup: () -> Void
+    let onEditGroup: () -> Void
+    let onSearch: () -> Void
 
     var body: some View {
-        GlassEffectContainer(spacing: Theme.Spacing.md) {
-            HStack(spacing: Theme.Spacing.md) {
-                GroupDropdownList(selection: $selected)
-                GlassIconButton(
-                    systemName: "plus",
-                    accessibilityLabel: "Add group",
-                    action: onAddGroup
-                )
-            }
+        HStack(spacing: 12) {
+            PaybitchWordmark()
+            Spacer()
+            PaybitchMenuButton(
+                hasSelectedGroup: hasSelectedGroup,
+                onSettings: onSettings,
+                onAddGroup: onAddGroup,
+                onEditGroup: onEditGroup,
+                onSearch: onSearch
+            )
         }
-        .padding(.horizontal, Theme.Spacing.lg)
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
+        .padding(.bottom, 6)
     }
-}
-
-#Preview {
-    @Previewable @State var selected: Group?
-    let modelData = ModelData()
-    return TopBar(selected: $selected, onAddGroup: {})
-        .environmentObject(modelData)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Theme.background)
 }

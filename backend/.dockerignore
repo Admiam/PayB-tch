@@ -1,0 +1,30 @@
+# Keep the build context small and deterministic: no local build output, IDE state, or secrets.
+**/bin/
+**/obj/
+**/out/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+
+# Git + CI + docs are not needed to build the image.
+.git/
+.github/
+.gitignore
+docs/
+ops/
+**/*.md
+
+# Compose + Docker meta (the image never builds itself).
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+.dockerignore
+
+# Local dev / secret material must never enter an image layer.
+**/appsettings.*.local.json
+**/*.pem
+**/*.p8
+**/.env
+**/.env.*
+**/*.pfx
