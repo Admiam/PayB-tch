@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <!-- Pin past the transitive 2.0.0 flagged by NU1903 (GHSA-v5pm-xwqc-g5wc, patched in 2.7.5); stays within the 2.x major AspNetCore.OpenApi 10.x expects. -->

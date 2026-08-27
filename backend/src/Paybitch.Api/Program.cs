@@ -123,7 +123,32 @@ try
     // --- OpenAPI document (surfaced via Scalar in Development only, §5) ---
     builder.Services.AddOpenApi();
 
-    // --- CORS: no policy registered — deny-all by default (§4.3). The only client is native iOS. ---
+    // --- CORS: origin-pinned allowlist for the web client (§4.3) ---
+    // §4.3 forbids AllowAnyOrigin outright: "a browser client gets its own reviewed,
+    // origin-pinned policy or nothing." Origins come from config and default to empty,
+    // so a stock checkout still denies every browser, exactly as before.
+    //
+    // ETag must be exposed explicitly. It is not a CORS-safelisted response header, so
+    // without this the browser strips it from JS while leaving it on the wire — and every
+    // If-Match flow (expenses, groups, members, settlements) silently breaks.
+    var corsOrigins = builder.Configuration
+        .GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
+    builder.Services.AddCors(options =>
+        options.AddPolicy(WebCorsPolicy, policy =>
+        {
+            if (corsOrigins.Length == 0) return;
+
+            policy
+                .WithOrigins(corsOrigins)
+                .WithHeaders("Authorization", "Content-Type", "If-Match")
+                .WithExposedHeaders("ETag")
+                .WithMethods("GET", "POST", "PATCH", "PUT", "DELETE")
+                .SetPreflightMaxAge(TimeSpan.FromHours(2));
+
+            // No AllowCredentials: auth is bearer-only, there is no cookie scheme, and a
+            // manually-set Authorization header is not a credential under the Fetch spec.
+        }));
 
     var app = builder.Build();
 
@@ -133,6 +158,12 @@ try
 
     if (!app.Environment.IsDevelopment())
         app.UseHsts();
+
+    // Ahead of the rate limiter and authentication on purpose. Middleware wraps the
+    // response on the way out too, so a request short-circuited by a 429 or a 401 still
+    // comes back through here and carries its CORS headers — otherwise the browser reports
+    // an opaque "CORS error" instead of the real status, hiding the actual failure.
+    app.UseCors(WebCorsPolicy);
 
     app.UseRateLimiter();
     app.UseAuthentication();
@@ -171,4 +202,8 @@ finally
 }
 
 /// <summary>Exposed for <c>WebApplicationFactory&lt;Program&gt;</c> integration tests.</summary>
-public partial class Program { }
+public partial class Program
+{
+    /// <summary>Name of the origin-pinned CORS policy applied to the whole pipeline.</summary>
+    internal const string WebCorsPolicy = "web-spa";
+}

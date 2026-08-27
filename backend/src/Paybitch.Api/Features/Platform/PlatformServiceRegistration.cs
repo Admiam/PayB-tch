@@ -27,8 +27,19 @@ public static class PlatformServiceRegistration
             config["Blob:LocalRoot"],
             sp.GetRequiredService<ILogger<FilesystemBlobStore>>()));
 
-        // --- Email transport (§0.4.4): log dev default; SES-EU in prod behind IEmailSender ---
-        services.AddScoped<IEmailSender, LogEmailSender>();
+        // --- Email transport (§0.4.4) ---
+        // SMTP once a host is configured, otherwise the log transport, so a checkout with no
+        // configuration still boots and dev keeps reading codes out of the log.
+        services.AddOptions<SmtpOptions>()
+            .Bind(config.GetSection(SmtpOptions.SectionName))
+            .ValidateDataAnnotations();
+
+        var smtp = config.GetSection(SmtpOptions.SectionName).Get<SmtpOptions>() ?? new SmtpOptions();
+
+        if (smtp.IsConfigured)
+            services.AddScoped<IEmailSender, SmtpEmailSender>();
+        else
+            services.AddScoped<IEmailSender, LogEmailSender>();
 
         return services;
     }
