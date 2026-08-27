@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- viewport-fit=cover lets the app paint into the notch/home-indicator area
+         so an installed PWA looks like a native app rather than a web page. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+
+    <title>Paybitch</title>
+    <meta name="description" content="Split expenses with friends. No accounts, no server — your data stays on your device." />
+
+    <!-- Installable-app behaviour on iOS/Android home screens. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Paybitch" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Matches --pb-bg so the browser chrome blends into the app in both themes. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f6" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0d" />
+
+    <!-- The one font we self-host. Preloaded because every glyph on the first
+         screen depends on it; without this the hero text reflows. -->
+    <link
+      rel="preload"
+      href="/fonts/SpaceGrotesk.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+/* Expense detail sheet — read-only view of one expense, ported from
+   `ExpenseDetailView.swift`. Sizes with no matching entry in tokens.css are
+   the literal numbers from the spec, same as the raw 88px/17px/-6deg already
+   hardcoded in components.css — add a token there first if one is missing,
+   don't invent one here. */
+
+.pb-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-9);
+  padding: 0 var(--pb-gutter);
+}
+
+/* ──────────────────────────────────────────────────────────────── hero ── */
+
+.pb-detail-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding-block: var(--pb-space-6);
+}
+
+.pb-detail-hero__icon {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: var(--pb-space-12);
+  background: var(--pb-pink);
+  color: #fff;
+  transform: rotate(-4deg);
+  box-shadow: var(--pb-shadow-pink-glow);
+  flex-shrink: 0;
+}
+
+.pb-detail-hero__title {
+  max-width: 100%;
+  margin-top: var(--pb-space-2);
+  font-size: 24px;
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-tight);
+  color: var(--pb-text-primary);
+  text-align: center;
+  overflow-wrap: break-word;
+}
+
+.pb-detail-hero__amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--pb-space-2);
+  color: var(--pb-text-primary);
+}
+
+.pb-detail-hero__figure {
+  font-size: var(--pb-text-amount-xl);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tightest);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pb-detail-hero__symbol {
+  font-size: var(--pb-text-wordmark);
+  font-weight: var(--pb-weight-bold);
+  opacity: 0.5;
+}
+
+.pb-detail-hero__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-3);
+  margin-top: var(--pb-space-1);
+}
+
+/* ────────────────────────────────────────────────────────────── paid by ── */
+
+.pb-detail-payer {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-7) var(--pb-space-8);
+}
+
+.pb-detail-payer__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+}
+
+.pb-detail-payer__name {
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-detail-payer__caption {
+  font-size: var(--pb-text-label);
+  color: var(--pb-text-muted);
+}
+
+.pb-detail-payer__amount {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-heavy);
+  color: var(--pb-positive);
+}
+
+/* ───────────────────────────────────────────────────────── split rows ── */
+
+.pb-detail-split-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-6) var(--pb-space-8);
+}
+
+.pb-detail-split-row__name {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-detail-split-row__amount {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-bold);
+}
+
+/* ──────────────────────────────────────────────────────────────── notes ── */
+
+.pb-detail-notes {
+  padding: var(--pb-space-7);
+  font-size: var(--pb-text-button);
+  color: var(--pb-text-primary);
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+/* ──────────────────────────────────────────────────────────── not found ── */
+
+.pb-detail-unavailable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: 64px var(--pb-gutter) 40px;
+  text-align: center;
+  color: var(--pb-text-primary);
+}
+
+.pb-detail-unavailable__title {
+  font-size: var(--pb-text-section);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-tight);
+}
+
+/* ───────────────────────────────────────────────── delete confirmation ── */
+
+.pb-detail-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-8);
+  border-radius: var(--pb-radius-card);
+  background: var(--pb-card);
+  text-align: center;
+}
+
+.pb-detail-confirm__title {
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}

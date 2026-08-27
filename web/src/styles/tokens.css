@@ -1,0 +1,201 @@
+/* Paybitch design tokens — ported 1:1 from the iOS asset catalog and
+   PaybitchTheme.swift. iOS points map directly to CSS px (the app is designed
+   at @1x logical points), so every number here is the number in the Swift.
+
+   Do not invent values. If something is missing, it belongs in the Swift first. */
+
+/* The wght axis really is 300–700 with a 300 default — the PostScript name is
+   SpaceGrotesk-Light. That is why `heavy` below is 700 and never 800/900:
+   asking for more would make the browser synthesize a fake bold. */
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/SpaceGrotesk.woff2") format("woff2-variations");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---- Surfaces & text (light) ----
+     These greys are deliberately cool: blue runs 1–2 points above red/green at
+     every step. Flattening them to neutral grey visibly changes the app. */
+  --pb-bg: #f4f4f6;
+  --pb-card: #ffffff;
+  --pb-chip-bg: #ebebef;
+  --pb-tile-3: #ededf0;
+  --pb-text-primary: #121214;
+  --pb-text-muted: rgba(18, 18, 20, 0.55);
+  --pb-divider: rgba(0, 0, 0, 0.08);
+  --pb-menu-bg: rgba(255, 255, 255, 0.95);
+
+  /* ---- Brand & status — identical in both themes ---- */
+  --pb-pink: #ff5097;
+  --pb-pink-15: rgba(255, 80, 151, 0.15);
+  --pb-lime: #e4f482;
+  --pb-positive: #7ccb52;
+  --pb-negative: #ff5572;
+
+  /* ---- Avatar palette, picked by a stable hash of the member id ---- */
+  --pb-avatar-0: #3cc5ff;
+  --pb-avatar-1: #ff5097;
+  --pb-avatar-2: #c75bff;
+  --pb-avatar-3: #e158ff;
+  --pb-avatar-4: #ffb13d;
+  --pb-avatar-5: #4cc6bd;
+  --pb-avatar-6: #ff8a3d;
+
+  /* ---- Background treatment (light) ---- */
+  --pb-glow: rgba(255, 80, 151, 0.09);
+  --pb-dot: rgba(0, 0, 0, 0.04);
+
+  /* ---- Liquid Glass (light) ----
+     The inset rim is what makes this read as Liquid Glass rather than a plain
+     frosted panel. Edge refraction is not reproducible in CSS and is dropped. */
+  --pb-glass-bg: rgba(255, 255, 255, 0.55);
+  --pb-glass-bg-pressed: rgba(255, 255, 255, 0.7);
+  --pb-glass-border: rgba(255, 255, 255, 0.65);
+  --pb-glass-rim-top: rgba(255, 255, 255, 0.85);
+  --pb-glass-rim-bottom: rgba(0, 0, 0, 0.04);
+  --pb-glass-accent-bg: rgba(255, 80, 151, 0.82);
+  --pb-glass-accent-border: rgba(255, 80, 151, 0.55);
+  --pb-glass-destructive-bg: rgba(255, 85, 114, 0.8);
+  --pb-glass-destructive-border: rgba(255, 85, 114, 0.55);
+  --pb-glass-fallback: #ffffff;
+  --pb-glass-blur: 24px;
+  --pb-glass-saturate: 180%;
+
+  /* ---- Typography ---- */
+  --pb-font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    system-ui, sans-serif;
+  --pb-weight-light: 300;
+  --pb-weight-regular: 400;
+  --pb-weight-semibold: 600;
+  --pb-weight-bold: 700;
+  --pb-weight-heavy: 700; /* axis maxes at 700 — never 800/900 */
+
+  --pb-text-display: 60px;
+  --pb-text-amount-xl: 56px;
+  --pb-text-tile-big: 42px;
+  --pb-text-h1: 36px;
+  --pb-text-h2: 32px;
+  --pb-text-tile: 28px;
+  --pb-text-wordmark: 26px;
+  --pb-text-section: 22px;
+  --pb-text-lg: 18px;
+  --pb-text-row: 16px;
+  --pb-text-button: 15px;
+  --pb-text-chip: 14px;
+  --pb-text-sm: 13px;
+  --pb-text-label: 12px;
+  --pb-text-caption: 11px;
+  --pb-text-micro: 8px;
+
+  /* Large display type is tracked in, small uppercase type is tracked out. */
+  --pb-track-tightest: -2px;
+  --pb-track-tighter: -1px;
+  --pb-track-tight: -0.5px;
+  --pb-track-snug: -0.2px;
+  --pb-track-normal: 0;
+  --pb-track-wide: 0.5px;
+  --pb-track-wider: 0.6px;
+  --pb-track-widest: 1px;
+  --pb-track-hero: 1.5px;
+
+  /* ---- Radii ---- */
+  --pb-radius-tile: 22px;
+  --pb-radius-card: 22px;
+  --pb-radius-row: 18px;
+  --pb-radius-sheet: 28px;
+  --pb-radius-button: 16px;
+  --pb-radius-chip: 999px;
+  --pb-radius-sm: 6px;
+  --pb-radius-md: 14px;
+
+  /* ---- Spacing ---- */
+  --pb-space-1: 2px;
+  --pb-space-2: 4px;
+  --pb-space-3: 6px;
+  --pb-space-4: 8px;
+  --pb-space-5: 10px;
+  --pb-space-6: 12px;
+  --pb-space-7: 14px;
+  --pb-space-8: 16px;
+  --pb-space-9: 18px;
+  --pb-space-10: 20px;
+  --pb-space-11: 24px;
+  --pb-space-12: 28px;
+  --pb-space-13: 32px;
+  --pb-gutter: 16px;
+  --pb-gutter-section: 24px;
+
+  /* ---- Shadows — SwiftUI radius is a Gaussian sigma, CSS blur is ~2x that ---- */
+  --pb-shadow-tile: 0 8px 44px rgba(0, 0, 0, 0.18);
+  --pb-shadow-pink-glow: 0 4px 28px rgba(255, 80, 151, 0.4);
+  --pb-shadow-pink-fab: 0 12px 60px rgba(255, 80, 151, 0.5);
+
+  /* ---- Motion — four timings for the whole app. Keep it that way. ---- */
+  --pb-ease-snappy: cubic-bezier(0.32, 0.72, 0, 1);
+  --pb-duration-fast: 200ms;
+  --pb-duration-press: 220ms;
+  --pb-duration-normal: 280ms;
+  --pb-pressed-scale: 0.96;
+
+  /* ---- Layout ---- */
+  --pb-fab-size: 64px;
+  --pb-scroll-bottom-inset: 100px; /* clears the FAB */
+}
+
+/* Dark values live in one place and are referenced twice: once for the system
+   preference, once for an explicit choice. Mirrors AppearanceMode's
+   system / light / dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pb-bg: #0c0c0d;
+    --pb-card: #1a1a1c;
+    --pb-chip-bg: #2a2a2c;
+    --pb-tile-3: #232325;
+    --pb-text-primary: #ffffff;
+    --pb-text-muted: rgba(255, 255, 255, 0.55);
+    --pb-divider: rgba(255, 255, 255, 0.08);
+    --pb-menu-bg: rgba(38, 38, 40, 0.92);
+
+    --pb-glow: rgba(255, 80, 151, 0.16);
+    --pb-dot: rgba(255, 255, 255, 0.04);
+
+    --pb-glass-bg: rgba(255, 255, 255, 0.1);
+    --pb-glass-bg-pressed: rgba(255, 255, 255, 0.16);
+    --pb-glass-border: rgba(255, 255, 255, 0.16);
+    --pb-glass-rim-top: rgba(255, 255, 255, 0.22);
+    --pb-glass-rim-bottom: rgba(0, 0, 0, 0.2);
+    --pb-glass-accent-bg: rgba(255, 80, 151, 0.72);
+    --pb-glass-accent-border: rgba(255, 120, 175, 0.4);
+    --pb-glass-destructive-bg: rgba(255, 85, 114, 0.68);
+    --pb-glass-destructive-border: rgba(255, 120, 140, 0.4);
+    --pb-glass-fallback: #232325;
+  }
+}
+
+:root[data-theme="dark"] {
+  --pb-bg: #0c0c0d;
+  --pb-card: #1a1a1c;
+  --pb-chip-bg: #2a2a2c;
+  --pb-tile-3: #232325;
+  --pb-text-primary: #ffffff;
+  --pb-text-muted: rgba(255, 255, 255, 0.55);
+  --pb-divider: rgba(255, 255, 255, 0.08);
+  --pb-menu-bg: rgba(38, 38, 40, 0.92);
+
+  --pb-glow: rgba(255, 80, 151, 0.16);
+  --pb-dot: rgba(255, 255, 255, 0.04);
+
+  --pb-glass-bg: rgba(255, 255, 255, 0.1);
+  --pb-glass-bg-pressed: rgba(255, 255, 255, 0.16);
+  --pb-glass-border: rgba(255, 255, 255, 0.16);
+  --pb-glass-rim-top: rgba(255, 255, 255, 0.22);
+  --pb-glass-rim-bottom: rgba(0, 0, 0, 0.2);
+  --pb-glass-accent-bg: rgba(255, 80, 151, 0.72);
+  --pb-glass-accent-border: rgba(255, 120, 175, 0.4);
+  --pb-glass-destructive-bg: rgba(255, 85, 114, 0.68);
+  --pb-glass-destructive-border: rgba(255, 120, 140, 0.4);
+  --pb-glass-fallback: #232325;
+}

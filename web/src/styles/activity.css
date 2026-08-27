@@ -1,0 +1,128 @@
+/* Searchable activity history, grouped by day. */
+
+.pb-activity-search {
+  padding: 0 var(--pb-gutter) var(--pb-space-6);
+}
+
+.pb-activity-search__field {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-5);
+  padding: var(--pb-space-5) var(--pb-space-7);
+  border-radius: var(--pb-radius-button);
+  background: var(--pb-card);
+  color: var(--pb-text-muted);
+}
+
+.pb-activity-search__field:focus-within {
+  outline: 2px solid var(--pb-pink);
+  outline-offset: 1px;
+}
+
+.pb-activity-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-semibold);
+}
+
+/* Safari renders a proprietary clear button on type=search that ignores the
+   surrounding design. */
+.pb-activity-search__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.pb-activity-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-3);
+  padding: 0 var(--pb-gutter) var(--pb-space-6);
+  font-size: var(--pb-text-label);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-muted);
+}
+
+.pb-activity-summary__dot {
+  opacity: 0.5;
+}
+
+.pb-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-10);
+}
+
+.pb-activity-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+}
+
+/* Day header: a small label with a hairline running to the right edge, which
+   separates days without adding the weight of a full section header. */
+.pb-activity-day {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-5);
+  padding-inline: var(--pb-gutter);
+}
+
+.pb-activity-day__label {
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-widest);
+  text-transform: uppercase;
+  color: var(--pb-text-muted);
+  white-space: nowrap;
+}
+
+.pb-activity-day__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--pb-divider);
+}
+
+.pb-activity-day__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+  padding-inline: var(--pb-gutter);
+}
+
+.pb-activity-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+}
+
+/* What this expense did to the current user's balance. */
+.pb-activity-net {
+  padding-inline: var(--pb-space-7);
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-muted);
+}
+
+.pb-activity-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--pb-space-3);
+  padding: var(--pb-space-13) var(--pb-space-11);
+  color: var(--pb-text-muted);
+}
+
+.pb-activity-empty__title {
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: -0.3px;
+  color: var(--pb-text-primary);
+}
+
+.pb-activity-empty__body {
+  max-width: 260px;
+  font-size: var(--pb-text-chip);
+  color: var(--pb-text-muted);
+}

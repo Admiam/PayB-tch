@@ -1,0 +1,41 @@
+# Deploy target: a Debian VPS running Docker. One container serves the app and
+# terminates TLS.
+#
+#   SITE_ADDRESS=pay.holu.be docker compose up -d --build
+#
+# The named volumes matter: Caddy stores the issued certificate and its ACME
+# account key there. Losing them means re-issuing on every restart, which will
+# eventually trip Let's Encrypt's rate limit.
+
+services:
+  web:
+    build: .
+    container_name: paybitch-web
+    restart: unless-stopped
+    environment:
+      # The hostname Caddy should obtain a certificate for. Use ":80" locally.
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "80:80"
+      - "443:443"
+      # HTTP/3. Harmless if the host firewall drops it.
+      - "443:443/udp"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/", "||", "exit", "1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        # Without a cap this grows until the VPS disk fills.
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  caddy-data:
+  caddy-config:

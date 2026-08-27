@@ -39,7 +39,7 @@ struct AddMemberSheet: View {
                         TextField(text: $name, prompt: Text("Type a name").foregroundStyle(Paybitch.textMuted)) {
                             Text("")
                         }
-                        .textInputAutocapitalization(.words)
+                        .paybitchNoAutocorrect()
                         .font(.spaceGrotesk(16, weight: .semibold))
                         .foregroundStyle(Paybitch.textPrimary)
                         .padding(.horizontal, 16)

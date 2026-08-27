@@ -46,7 +46,7 @@ struct GroupEditorSheet: View {
                             TextField(text: $name, prompt: Text("e.g. Roommates").foregroundStyle(Paybitch.textMuted)) {
                                 Text("")
                             }
-                            .textInputAutocapitalization(.words)
+                            .paybitchNoAutocorrect()
                             .font(.spaceGrotesk(16, weight: .semibold))
                             .foregroundStyle(Paybitch.textPrimary)
                             .padding(.horizontal, 16)

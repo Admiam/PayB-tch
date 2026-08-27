@@ -1,0 +1,369 @@
+/* Dashboard sections: tiles, crew strip, settlement summary, activity list. */
+
+/* ───────────────────────────────────────────────────────────── top bar ── */
+
+.pb-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-2) var(--pb-gutter) var(--pb-space-3);
+}
+
+.pb-topbar__spacer {
+  flex: 1;
+}
+
+.pb-menu {
+  position: relative;
+}
+
+.pb-menu__popover {
+  position: absolute;
+  top: calc(100% + var(--pb-space-4));
+  right: 0;
+  z-index: 50;
+  min-width: 220px;
+  padding: var(--pb-space-2);
+  border-radius: var(--pb-radius-button);
+  background: var(--pb-menu-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--pb-divider);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+  animation: pb-menu-in 160ms var(--pb-ease-snappy);
+}
+
+@keyframes pb-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+.pb-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pb-space-6);
+  width: 100%;
+  padding: var(--pb-space-5) var(--pb-space-6);
+  border-radius: var(--pb-space-5);
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+  text-align: left;
+}
+
+.pb-menu__item:hover {
+  background: var(--pb-chip-bg);
+}
+
+.pb-menu__item svg {
+  color: var(--pb-pink);
+}
+
+/* ────────────────────────────────────────────────────────── chips row ── */
+
+.pb-chips {
+  display: flex;
+  gap: var(--pb-space-4);
+  padding: 0 var(--pb-gutter) var(--pb-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pb-chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────── tiles ── */
+
+.pb-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-5);
+  padding: var(--pb-space-6) var(--pb-gutter) 0;
+}
+
+.pb-tiles__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pb-space-5);
+}
+
+/* ──────────────────────────────────────────────────────────────── crew ── */
+
+.pb-crew {
+  margin-inline: var(--pb-gutter);
+}
+
+.pb-crew__scroll {
+  display: flex;
+  gap: var(--pb-space-3);
+  padding: var(--pb-space-7) var(--pb-space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pb-crew__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.pb-crew__chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-3);
+  min-width: 64px;
+}
+
+.pb-crew__name {
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+}
+
+.pb-crew__balance {
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────── who owes whom ── */
+
+.pb-debts {
+  margin-inline: var(--pb-gutter);
+  padding: var(--pb-space-4);
+}
+
+.pb-debts__rows {
+  padding-top: var(--pb-space-4);
+}
+
+.pb-debts__row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-5);
+  padding: var(--pb-space-5) var(--pb-space-6);
+}
+
+.pb-debts__names {
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-debts__amount {
+  margin-left: auto;
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-heavy);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+}
+
+/* ──────────────────────────────────────────────────────── flow canvas ── */
+
+.pb-flow {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin-inline: auto;
+  aspect-ratio: 1;
+  padding-block: var(--pb-space-4);
+}
+
+.pb-flow__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Dash period is 12px; travelling 24px lands on an identical frame, so the
+   loop is seamless. Negative offset marches debtor → creditor. */
+.pb-flow__path {
+  animation: pb-march 1.5s linear infinite;
+}
+
+@keyframes pb-march {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.pb-flow__node {
+  position: absolute;
+  width: 80px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-2);
+  text-align: center;
+  pointer-events: none;
+}
+
+.pb-flow__name {
+  font-size: 10px;
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-flow__path {
+    animation: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────── activity ── */
+
+.pb-activity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+  padding-inline: var(--pb-gutter);
+}
+
+.pb-expense {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: var(--pb-card);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.pb-expense__main {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  flex: 1;
+  min-width: 0;
+  padding: var(--pb-space-7);
+  text-align: left;
+}
+
+.pb-expense__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--pb-radius-md);
+  flex-shrink: 0;
+}
+
+.pb-expense__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.pb-expense__title {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-expense__meta {
+  font-size: var(--pb-text-label);
+  font-weight: var(--pb-weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-expense__meta-dim {
+  color: var(--pb-text-muted);
+}
+
+.pb-expense__meta-strong {
+  color: var(--pb-text-primary);
+  opacity: 0.85;
+  font-weight: var(--pb-weight-bold);
+}
+
+.pb-expense__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--pb-space-1);
+  flex-shrink: 0;
+}
+
+.pb-expense__amount {
+  font-size: 17px;
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: -0.3px;
+  color: var(--pb-text-primary);
+}
+
+.pb-expense__split {
+  font-size: 10px;
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--pb-text-muted);
+}
+
+/* Delete stays hidden until the row is hovered or focused on pointer devices;
+   on touch it is always visible, since there is no hover to reveal it. */
+.pb-expense__delete {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  color: var(--pb-negative);
+  flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .pb-expense__delete {
+    opacity: 0;
+    transition: opacity var(--pb-duration-fast) ease-out;
+  }
+
+  .pb-expense:hover .pb-expense__delete,
+  .pb-expense__delete:focus-visible {
+    opacity: 1;
+  }
+}
+
+/* ───────────────────────────────────────────────────────── wide screen ── */
+
+/* Past this width the single phone column wastes most of the screen, so the
+   dashboard becomes two columns: numbers and people on the left, the ledger
+   on the right. */
+@media (min-width: 900px) {
+  .pb-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--pb-space-11);
+    align-items: start;
+  }
+
+  .pb-tiles {
+    padding-inline: 0;
+  }
+
+  .pb-crew,
+  .pb-debts,
+  .pb-activity {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .pb-tiles__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}

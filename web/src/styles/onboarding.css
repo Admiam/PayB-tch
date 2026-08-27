@@ -1,0 +1,330 @@
+/* Styles for the two first-run / group-management screens: `OnboardingView`
+   and `GroupEditorSheet`. Same rule as the rest of the sheet — every
+   measurement comes from the iOS source, so prefer a token over a new number.
+   Literals below are the ones the Swift states outright and no token exists
+   for. */
+
+/* ════════════════════════════════════════════════════════════ onboarding ══ */
+
+/* Fixed, not absolute: the glow stays pinned to the viewport corner while the
+   step content scrolls, exactly as `ignoresSafeArea` does on iOS. Opacity
+   rather than a colour stop so the step-2 lift can animate. */
+.pb-onboarding__glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--pb-glow-strength, 0.14);
+  background: radial-gradient(
+    circle 500px at 100% 0%,
+    var(--pb-pink) 0%,
+    transparent 100%
+  );
+  transition: opacity var(--pb-duration-normal) var(--pb-ease-snappy);
+}
+
+.pb-onboarding {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-11);
+  min-height: 100dvh;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: calc(60px + env(safe-area-inset-top)) var(--pb-space-11)
+    calc(var(--pb-space-11) + env(safe-area-inset-bottom));
+}
+
+.pb-onboarding__step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pb-space-11);
+  width: 100%;
+}
+
+.pb-onboarding__step--intro {
+  gap: var(--pb-space-13);
+}
+
+.pb-onboarding__wordmark {
+  white-space: pre-line;
+  font-size: var(--pb-text-display);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tightest);
+  /* SwiftUI line-spacing is additive, so the source's −12 is the font's own
+     leading at 60px minus 12. */
+  line-height: 1.05;
+  color: var(--pb-pink);
+  transform: rotate(-3deg);
+  transform-origin: left center;
+}
+
+.pb-onboarding__intro-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-6);
+}
+
+.pb-onboarding__tagline {
+  white-space: pre-line;
+  font-size: var(--pb-text-section);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-tight);
+  line-height: 1.25;
+  color: var(--pb-text-primary);
+}
+
+.pb-onboarding__lede {
+  font-size: var(--pb-text-button);
+  color: var(--pb-text-muted);
+}
+
+/* .pb-label carries the size, weight and casing; only the tracking differs.
+   Doubled up so the override does not depend on stylesheet import order. */
+.pb-label.pb-onboarding__eyebrow {
+  letter-spacing: var(--pb-track-hero);
+}
+
+.pb-onboarding__heading {
+  white-space: pre-line;
+  font-size: var(--pb-text-h1);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tighter);
+  line-height: 1.12;
+  color: var(--pb-text-primary);
+}
+
+.pb-onboarding__currencies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pb-space-4);
+}
+
+.pb-onboarding__currency {
+  padding: var(--pb-space-4) var(--pb-space-6);
+  border-radius: var(--pb-radius-chip);
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-onboarding__currency.pb-glass--accent {
+  color: #fff;
+}
+
+/* Pushes the footer to the bottom on a tall screen without letting it collide
+   with the step content on a short one. */
+.pb-onboarding__spacer {
+  flex: 1;
+  min-height: var(--pb-space-13);
+}
+
+.pb-onboarding__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-7);
+}
+
+.pb-onboarding__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--pb-space-10) 0;
+  border-radius: 22px;
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: 0.2px;
+  color: var(--pb-pink);
+}
+
+.pb-onboarding__cta--filled {
+  color: #fff;
+}
+
+.pb-btn.pb-onboarding__skip {
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-muted);
+}
+
+/* ══════════════════════════════════════════════════════════ group editor ══ */
+
+.pb-group-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-9);
+  padding: var(--pb-space-4) var(--pb-gutter) 0;
+}
+
+.pb-group-editor__name {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+  padding: var(--pb-space-7) var(--pb-space-8);
+}
+
+.pb-label.pb-group-editor__name-label {
+  letter-spacing: 0.8px;
+}
+
+.pb-group-editor__name-input {
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-semibold);
+}
+
+/* The select sits invisibly over the whole row and owns the interaction; the
+   row's own text is decorative and hidden from assistive tech. */
+.pb-currency-row {
+  position: relative;
+}
+
+.pb-currency-row__value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pb-space-3);
+  margin-left: auto;
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-pink);
+}
+
+.pb-currency-row__chevron {
+  display: flex;
+  opacity: 0.5;
+}
+
+.pb-currency-row__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.pb-currency-row:focus-within {
+  outline: 2px solid var(--pb-pink);
+  outline-offset: -2px;
+}
+
+.pb-group-editor__empty {
+  padding: var(--pb-space-8);
+  font-size: var(--pb-text-chip);
+  color: var(--pb-text-muted);
+}
+
+.pb-member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-6) var(--pb-space-8);
+}
+
+.pb-member-row__name {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+/* Hand-drawn switch — the platform checkbox cannot be shaped like this one. */
+.pb-toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 50px;
+  height: 30px;
+  margin-left: auto;
+  border-radius: var(--pb-radius-chip);
+  background: rgba(120, 120, 128, 0.32);
+  transition: background var(--pb-duration-fast) var(--pb-ease-snappy);
+}
+
+.pb-toggle[aria-checked="true"] {
+  background: var(--pb-pink);
+}
+
+.pb-toggle:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pb-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: transform var(--pb-duration-fast) var(--pb-ease-snappy);
+}
+
+.pb-toggle[aria-checked="true"] .pb-toggle__knob {
+  transform: translateX(20px);
+}
+
+.pb-member-new {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  width: 100%;
+  padding: var(--pb-space-7) var(--pb-space-8);
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-pink);
+  text-align: left;
+}
+
+.pb-member-new__plus {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--pb-pink-15);
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-heavy);
+  line-height: 1;
+}
+
+.pb-member-add {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-4);
+  padding: var(--pb-space-5) var(--pb-space-8) var(--pb-space-7);
+}
+
+.pb-input.pb-member-add__input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--pb-space-5) var(--pb-space-6);
+  border-radius: var(--pb-radius-md);
+  background: var(--pb-chip-bg);
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-semibold);
+}
+
+/* The web stand-in for a confirmation dialog: it replaces the delete button
+   in place rather than covering the sheet that raised it. */
+.pb-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-8);
+  border-radius: var(--pb-radius-card);
+  background: var(--pb-card);
+}
+
+.pb-confirm__title {
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-group-editor__hint {
+  padding-inline: var(--pb-space-8);
+  font-size: var(--pb-text-label);
+  color: var(--pb-text-muted);
+}

@@ -1,0 +1,258 @@
+@import "./tokens.css";
+
+/* ---------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Stop iOS from enlarging text when the phone is turned sideways — the app
+     is portrait-locked and the type scale is fixed. */
+  -webkit-text-size-adjust: 100%;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: var(--pb-font);
+  font-weight: var(--pb-weight-light);
+  font-size: var(--pb-text-button);
+  color: var(--pb-text-primary);
+  background-color: var(--pb-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* An installed PWA should not rubber-band or offer text selection the way a
+     document does — those are the tells that give away a web view. */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100%;
+  isolation: isolate;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Selection is allowed in fields, suppressed everywhere else — matches how a
+   native app behaves. */
+input,
+textarea,
+[contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--pb-pink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------- app background -- */
+
+/* Three stacked layers: base fill, a pink glow anchored top-trailing, and a
+   20px dot grid. Fixed rather than scrolling so the glow stays pinned to the
+   viewport corner exactly as ignoresSafeArea does on iOS. */
+.pb-app-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--pb-bg);
+  background-image:
+    radial-gradient(circle 1px at 0 0, var(--pb-dot) 1px, transparent 1px),
+    radial-gradient(circle at 100% 0%, var(--pb-glow) 0%, transparent 70%);
+  background-size:
+    20px 20px,
+    100% 100%;
+  background-repeat: repeat, no-repeat;
+}
+
+/* -------------------------------------------------------- liquid glass -- */
+
+.pb-glass {
+  position: relative;
+  background: var(--pb-glass-bg);
+  backdrop-filter: blur(var(--pb-glass-blur)) saturate(var(--pb-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--pb-glass-blur))
+    saturate(var(--pb-glass-saturate));
+  border: 1px solid var(--pb-glass-border);
+  box-shadow:
+    inset 0 1px 0 0 var(--pb-glass-rim-top),
+    inset 0 -1px 0 0 var(--pb-glass-rim-bottom),
+    0 2px 12px rgba(0, 0, 0, 0.1);
+  transition:
+    transform var(--pb-duration-press) var(--pb-ease-snappy),
+    background-color var(--pb-duration-press) var(--pb-ease-snappy);
+}
+
+/* Only interactive glass springs on press. Tiles use plain .regular glass and
+   deliberately have no press state. */
+.pb-glass--interactive:active {
+  transform: scale(var(--pb-pressed-scale));
+  background: var(--pb-glass-bg-pressed);
+}
+
+.pb-glass--accent {
+  background: var(--pb-glass-accent-bg);
+  border-color: var(--pb-glass-accent-border);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
+    0 2px 14px rgba(255, 80, 151, 0.28);
+  color: #fff;
+}
+
+.pb-glass--accent.pb-glass--interactive:active {
+  background: var(--pb-glass-accent-bg);
+}
+
+.pb-glass--destructive {
+  background: var(--pb-glass-destructive-bg);
+  border-color: var(--pb-glass-destructive-border);
+  color: #fff;
+}
+
+.pb-glass--dimmed {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .pb-glass {
+    background: var(--pb-glass-fallback);
+  }
+}
+
+/* ------------------------------------------------------------ layout -- */
+
+/* The app column. On phones it fills the screen; on a desktop browser it stays
+   phone-width and centred so the design reads as intended instead of stretching
+   a 400px layout across 1600px. Wider breakpoints opt into more columns
+   individually rather than this container growing without limit. */
+.pb-app {
+  position: relative;
+  min-height: 100dvh;
+  max-width: 520px;
+  margin-inline: auto;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pb-scroll {
+  padding-bottom: calc(
+    var(--pb-scroll-bottom-inset) + env(safe-area-inset-bottom)
+  );
+}
+
+.pb-gutter {
+  padding-inline: var(--pb-gutter);
+}
+
+/* Wide screens get a genuinely different composition — see layout.css. */
+@media (min-width: 900px) {
+  .pb-app {
+    max-width: 1200px;
+  }
+}
+
+/* -------------------------------------------------------- typography -- */
+
+.pb-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--pb-space-4);
+  font-size: var(--pb-text-wordmark);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tighter);
+  color: var(--pb-text-primary);
+}
+
+.pb-wordmark::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pb-pink);
+  transform: translateY(-2px);
+}
+
+/* Uppercase micro-label used above field groups and inside tiles. */
+.pb-label {
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-widest);
+  text-transform: uppercase;
+  color: var(--pb-text-muted);
+}
+
+.pb-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------- a11y/motion -- */
+
+.pb-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pb-glass,
+  .pb-glass--interactive:active {
+    transform: none;
+  }
+}

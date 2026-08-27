@@ -50,6 +50,14 @@ extension View {
     func paybitchShadow(_ s: ShadowStyle) -> some View {
         shadow(color: s.color, radius: s.radius, x: s.x, y: s.y)
     }
+
+    /// Turns off autocorrect and capitalize-after-space. Applied to every
+    /// text field in the app — names, titles, and notes read better without
+    /// the system second-guessing each word.
+    func paybitchNoAutocorrect() -> some View {
+        autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+    }
 }
 
 // MARK: - Typography (Space Grotesk)

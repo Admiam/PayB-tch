@@ -1,0 +1,589 @@
+/* Add / edit expense: the pink hero card, the paid-by strip, the embedded split
+   editor and the icon picker. Numbers come from the iOS source — see specs §3,
+   §4 and §16. */
+
+:root {
+  /* The hero gradient runs top-left → bottom-right between these two pinks. */
+  --pb-hero-from: #ff5097;
+  --pb-hero-to: #ff7bb6;
+  --pb-hero-well: rgba(0, 0, 0, 0.18);
+  --pb-hero-well-strong: rgba(0, 0, 0, 0.2);
+  --pb-on-hero-dim: rgba(255, 255, 255, 0.7);
+
+  /* Plain system green/red, deliberately *not* the positive/negative tokens —
+     the split editor's delta is arithmetic feedback, not a balance. */
+  --pb-split-balanced: #34c759;
+  --pb-split-off: #ff3b30;
+}
+
+.pb-expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-9);
+  padding-inline: var(--pb-gutter);
+}
+
+/* ──────────────────────────────────────────────────────────── hero card ── */
+
+.pb-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-10);
+  border-radius: 26px;
+  background: linear-gradient(
+    135deg,
+    var(--pb-hero-from) 0%,
+    var(--pb-hero-to) 100%
+  );
+  color: #fff;
+}
+
+.pb-hero__row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-5);
+}
+
+.pb-hero__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--pb-radius-md);
+  background: var(--pb-hero-well-strong);
+  color: #fff;
+  transition: transform var(--pb-duration-press) var(--pb-ease-snappy);
+}
+
+.pb-hero__icon:active {
+  transform: scale(var(--pb-pressed-scale));
+}
+
+.pb-hero__icon-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--pb-pink);
+  color: #fff;
+}
+
+.pb-hero__title {
+  flex: 1;
+  min-width: 0;
+  padding: var(--pb-space-5) var(--pb-space-7);
+  border: none;
+  outline: none;
+  border-radius: var(--pb-space-6);
+  background: var(--pb-hero-well);
+  font-family: inherit;
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: #fff;
+}
+
+.pb-hero__title::placeholder {
+  color: var(--pb-on-hero-dim);
+}
+
+.pb-hero__amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--pb-space-3);
+  width: 100%;
+}
+
+.pb-hero__amount {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--pb-text-amount-xl);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tightest);
+  line-height: 1.05;
+  color: #fff;
+}
+
+.pb-hero__amount::placeholder {
+  color: var(--pb-on-hero-dim);
+}
+
+.pb-hero__currency {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pb-hero__currency-symbol {
+  font-size: 22px;
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-on-hero-dim);
+}
+
+/* The real control sits invisibly on top of the symbol, so the picker is the
+   platform's own — a wheel on a phone, a menu on a desktop. */
+.pb-hero__currency-select {
+  position: absolute;
+  inset: -8px -6px;
+  width: calc(100% + 12px);
+  opacity: 0;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+}
+
+.pb-hero__currency:focus-within .pb-hero__currency-symbol {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ───────────────────────────────────────────────────────────── paid by ── */
+
+.pb-paidby {
+  display: flex;
+  gap: var(--pb-space-4);
+  padding: var(--pb-space-6);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pb-paidby::-webkit-scrollbar {
+  display: none;
+}
+
+.pb-paidby__pick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-3);
+  min-width: 64px;
+  padding: var(--pb-space-4) var(--pb-space-5);
+  border: 2px solid transparent;
+  border-radius: var(--pb-radius-md);
+  transition:
+    border-color var(--pb-duration-fast) var(--pb-ease-snappy),
+    color var(--pb-duration-fast) var(--pb-ease-snappy);
+}
+
+.pb-paidby__pick.is-active {
+  border-color: var(--pb-pink);
+}
+
+.pb-paidby__name {
+  font-size: var(--pb-text-label);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+}
+
+.pb-paidby__pick.is-active .pb-paidby__name {
+  color: var(--pb-pink);
+}
+
+/* ──────────────────────────────────────────────────────── split editor ── */
+
+.pb-split {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+  padding: var(--pb-space-7);
+}
+
+.pb-seg {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--pb-space-1);
+  padding: var(--pb-space-2);
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-chip-bg);
+}
+
+.pb-seg__btn {
+  padding: var(--pb-space-5) var(--pb-space-4);
+  border-radius: var(--pb-radius-chip);
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  transition:
+    background-color var(--pb-duration-fast) var(--pb-ease-snappy),
+    color var(--pb-duration-fast) var(--pb-ease-snappy);
+}
+
+.pb-seg__btn.is-active {
+  background: var(--pb-pink);
+  color: #fff;
+}
+
+.pb-split__hint {
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}
+
+.pb-split__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+}
+
+.pb-split__rows.is-tight {
+  gap: var(--pb-space-3);
+}
+
+.pb-split__row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  min-height: 36px;
+}
+
+/* The whole name block is the toggle; only the trailing accessory is outside
+   it, because that is where the editable fields live. */
+.pb-split__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.pb-split__check {
+  display: grid;
+  place-items: center;
+  color: var(--pb-text-muted);
+  flex-shrink: 0;
+}
+
+.pb-split__check.is-on {
+  color: var(--pb-pink);
+}
+
+.pb-split__name {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-regular);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-split__name.is-me {
+  font-weight: var(--pb-weight-bold);
+}
+
+.pb-split__share {
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-muted);
+  white-space: nowrap;
+}
+
+.pb-split__exact {
+  width: 100px;
+  flex-shrink: 0;
+  padding: var(--pb-space-3) var(--pb-space-5);
+  border: 1px solid var(--pb-divider);
+  outline: none;
+  border-radius: var(--pb-space-5);
+  background: var(--pb-chip-bg);
+  font-family: inherit;
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+  text-align: right;
+}
+
+.pb-split__exact::placeholder {
+  color: var(--pb-text-muted);
+}
+
+.pb-split__shares-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-4);
+  flex-shrink: 0;
+}
+
+.pb-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pb-space-1);
+  padding: 2px;
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-chip-bg);
+}
+
+.pb-stepper__btn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-bold);
+  line-height: 1;
+  color: var(--pb-pink);
+}
+
+.pb-stepper__btn:disabled {
+  color: var(--pb-text-muted);
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pb-stepper__value {
+  min-width: 24px;
+  text-align: center;
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-split__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  padding-top: var(--pb-space-2);
+}
+
+.pb-split__sum,
+.pb-split__delta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pb-space-4);
+}
+
+.pb-split__sum {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+}
+
+.pb-split__delta {
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-semibold);
+}
+
+.pb-split__sum.is-balanced,
+.pb-split__delta.is-balanced {
+  color: var(--pb-split-balanced);
+}
+
+.pb-split__sum.is-off,
+.pb-split__delta.is-off {
+  color: var(--pb-split-off);
+}
+
+/* ────────────────────────────────────────────────────────── date, notes ── */
+
+.pb-daterow {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-7);
+}
+
+.pb-daterow__icon {
+  display: grid;
+  place-items: center;
+  color: var(--pb-pink);
+}
+
+.pb-daterow__input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+  accent-color: var(--pb-pink);
+  color-scheme: light dark;
+}
+
+.pb-daterow__input::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.pb-notes {
+  display: block;
+  width: 100%;
+  /* One line by default; JS grows it and this caps the growth at four. */
+  max-height: calc(4 * 1.4em + 2 * var(--pb-space-7));
+  padding: var(--pb-space-7);
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  overflow-y: auto;
+  font-family: inherit;
+  font-size: var(--pb-text-button);
+  line-height: 1.4;
+  color: var(--pb-text-primary);
+}
+
+.pb-notes::placeholder {
+  color: var(--pb-text-muted);
+}
+
+/* ────────────────────────────────────────────────────── confirm dialog ── */
+
+.pb-expense-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: grid;
+  place-items: center;
+  padding: var(--pb-space-11);
+}
+
+.pb-expense-confirm__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  cursor: default;
+}
+
+.pb-expense-confirm__panel {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  padding: var(--pb-space-10);
+  border-radius: var(--pb-radius-tile);
+  text-align: center;
+  animation: pb-confirm-in 160ms var(--pb-ease-snappy);
+}
+
+.pb-expense-confirm__title {
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-tight);
+  color: var(--pb-text-primary);
+}
+
+.pb-expense-confirm__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pb-space-11);
+  margin-top: var(--pb-space-9);
+}
+
+.pb-expense-confirm__delete {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-heavy);
+  color: var(--pb-negative);
+}
+
+@keyframes pb-confirm-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-expense-confirm__panel {
+    animation: none;
+  }
+}
+
+/* ───────────────────────────────────────────────────────── icon picker ── */
+
+.pb-iconpicker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-11);
+  padding-inline: var(--pb-gutter);
+}
+
+.pb-iconpicker__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-5);
+}
+
+.pb-iconpicker__caption {
+  /* Same micro-label as elsewhere, tracked a touch tighter per §16.3. */
+  letter-spacing: var(--pb-track-wider);
+}
+
+.pb-iconpicker__auto {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-6);
+  border-radius: var(--pb-radius-row);
+  background: var(--pb-card);
+  text-align: left;
+}
+
+.pb-iconpicker__auto-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+}
+
+.pb-iconpicker__auto-title {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-iconpicker__auto-sub {
+  font-size: var(--pb-text-label);
+  color: var(--pb-text-muted);
+}
+
+.pb-iconpicker__tick {
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  color: var(--pb-pink);
+}
+
+.pb-iconpicker__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--pb-space-6);
+  justify-items: center;
+}
+
+.pb-icon-tile {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  border: 1px solid var(--pb-divider);
+  border-radius: var(--pb-radius-button);
+  background: var(--pb-card);
+  color: var(--pb-text-primary);
+  transition:
+    transform var(--pb-duration-press) var(--pb-ease-snappy),
+    background-color var(--pb-duration-fast) var(--pb-ease-snappy);
+}
+
+button.pb-icon-tile:active {
+  transform: scale(var(--pb-pressed-scale));
+}
+
+.pb-icon-tile.is-selected {
+  border-color: transparent;
+  background: var(--pb-pink);
+  color: #fff;
+}

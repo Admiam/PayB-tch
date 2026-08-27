@@ -1,0 +1,198 @@
+/* Modal sheet presentation. Bottom sheet on phones, centred dialog on wide
+   screens — the same component, two compositions. */
+
+.pb-sheet-root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.pb-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: pb-fade-in var(--pb-duration-normal) var(--pb-ease-snappy);
+  cursor: default;
+}
+
+.is-closing .pb-sheet-backdrop {
+  animation: pb-fade-out var(--pb-duration-press) var(--pb-ease-snappy) forwards;
+}
+
+.pb-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 92dvh;
+  margin-inline: auto;
+  background: var(--pb-bg);
+  border-radius: var(--pb-radius-sheet) var(--pb-radius-sheet) 0 0;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.35);
+  animation: pb-sheet-in var(--pb-duration-normal) var(--pb-ease-snappy);
+  transition: transform var(--pb-duration-press) var(--pb-ease-snappy);
+  outline: none;
+  overflow: hidden;
+}
+
+.is-closing .pb-sheet {
+  animation: pb-sheet-out var(--pb-duration-press) var(--pb-ease-snappy) forwards;
+}
+
+/* The grab handle. Its hit area is deliberately taller than the visible pill so
+   the drag is easy to catch with a thumb. */
+.pb-sheet__grabber-area {
+  display: grid;
+  place-items: center;
+  padding: var(--pb-space-5) 0 var(--pb-space-2);
+  touch-action: none;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.pb-sheet__grabber-area:active {
+  cursor: grabbing;
+}
+
+.pb-sheet__grabber {
+  width: 36px;
+  height: 5px;
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-text-muted);
+  opacity: 0.4;
+}
+
+.pb-sheet__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-2) var(--pb-gutter) var(--pb-space-6);
+  flex-shrink: 0;
+}
+
+.pb-sheet__title {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: var(--pb-weight-heavy);
+  color: var(--pb-text-primary);
+}
+
+/* Fixed min-width on both sides keeps the title optically centred whether or
+   not there is a trailing action. */
+.pb-sheet__action {
+  min-width: 34px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pb-sheet__content {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
+}
+
+/* Wide screens: a centred card rather than a bottom sheet. */
+@media (min-width: 640px) {
+  .pb-sheet-root {
+    justify-content: center;
+    align-items: center;
+    padding: var(--pb-space-11);
+  }
+
+  .pb-sheet {
+    max-width: 560px;
+    max-height: 86dvh;
+    border-radius: var(--pb-radius-sheet);
+    animation-name: pb-dialog-in;
+  }
+
+  .is-closing .pb-sheet {
+    animation-name: pb-dialog-out;
+  }
+
+  /* Dragging a centred dialog by a grabber makes no sense. */
+  .pb-sheet__grabber-area {
+    display: none;
+  }
+
+  .pb-sheet__content {
+    padding-bottom: var(--pb-space-11);
+  }
+}
+
+/* ─────────────────────────────────────────────────── full-screen cover ── */
+
+.pb-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  overflow-y: auto;
+  background: var(--pb-bg);
+  animation: pb-fade-in var(--pb-duration-normal) var(--pb-ease-snappy);
+}
+
+/* ───────────────────────────────────────────────────────────── keyframes ── */
+
+@keyframes pb-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pb-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pb-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pb-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes pb-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pb-dialog-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-sheet,
+  .pb-sheet-backdrop,
+  .pb-cover {
+    animation: none;
+  }
+}

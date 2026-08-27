@@ -112,6 +112,7 @@ struct AddExpenseSheet: View {
                             .padding(14)
                             Divider().background(Paybitch.divider)
                             TextField("Notes (optional)", text: $notes, axis: .vertical)
+                                .paybitchNoAutocorrect()
                                 .font(.spaceGrotesk(15))
                                 .foregroundStyle(Paybitch.textPrimary)
                                 .lineLimit(1...4)
@@ -188,6 +189,7 @@ struct AddExpenseSheet: View {
                 TextField(text: $title, prompt: Text("What was it for?").foregroundStyle(.white.opacity(0.7))) {
                     Text("")
                 }
+                .paybitchNoAutocorrect()
                 .font(.spaceGrotesk(15, weight: .bold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 14)

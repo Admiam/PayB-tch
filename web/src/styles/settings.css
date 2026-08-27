@@ -1,0 +1,262 @@
+/* Settings and member-editor screens, ported from `SettingsSheet.swift` and
+   `AddMemberSheet.swift`. The export/reset/about-privacy pieces are web-only
+   and have no iOS source — see SettingsSheet.tsx for why. Class names are
+   namespaced per-screen (`pb-settings-*`, `pb-member-*`) since several other
+   screens build their own icon grids and this file has no module scoping. */
+
+.pb-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-9);
+  padding: var(--pb-space-4) var(--pb-gutter) 0;
+}
+
+/* ────────────────────────────────────────────────────────── appearance ── */
+
+.pb-settings-seg-pad {
+  padding: var(--pb-space-4);
+}
+
+.pb-settings-seg {
+  position: relative;
+  display: flex;
+  padding: var(--pb-space-2);
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-chip-bg);
+}
+
+.pb-settings-seg__thumb {
+  position: absolute;
+  top: var(--pb-space-2);
+  left: var(--pb-space-2);
+  width: calc((100% - 8px) / 3);
+  height: calc(100% - 8px);
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-pink);
+  transition: transform var(--pb-duration-normal) var(--pb-ease-snappy);
+  pointer-events: none;
+}
+
+.pb-settings-seg__btn {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: var(--pb-space-5) 0;
+  border-radius: var(--pb-radius-chip);
+  text-align: center;
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  transition: color var(--pb-duration-fast) ease-out;
+}
+
+.pb-settings-seg__btn.is-active {
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-settings-seg__thumb {
+    transition: none;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────── profile ── */
+
+.pb-settings-empty {
+  padding: var(--pb-space-8);
+  font-size: var(--pb-text-sm);
+  color: var(--pb-text-muted);
+}
+
+.pb-settings-chevron {
+  display: inline-flex;
+  color: var(--pb-pink);
+  opacity: 0.5;
+  transition: transform var(--pb-duration-fast) ease-out;
+}
+
+.pb-row[aria-expanded="true"] .pb-settings-chevron {
+  transform: rotate(90deg);
+}
+
+.pb-settings-picker {
+  background: var(--pb-chip-bg);
+}
+
+.pb-settings-picker__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pb-space-6);
+  width: 100%;
+  padding: var(--pb-space-6) var(--pb-space-8);
+  text-align: left;
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+}
+
+.pb-settings-picker__item:not(:first-child) {
+  border-top: 1px solid var(--pb-divider);
+}
+
+.pb-settings-picker__item.is-current {
+  color: var(--pb-pink);
+  font-weight: var(--pb-weight-bold);
+}
+
+.pb-settings-picker__item svg {
+  color: var(--pb-pink);
+  flex-shrink: 0;
+}
+
+/* ────────────────────────────────────────────────────────────── members ── */
+
+.pb-settings-member {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  width: 100%;
+  padding: var(--pb-space-6) var(--pb-space-8);
+  text-align: left;
+}
+
+.pb-settings-member__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.pb-settings-member__name {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-pink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pb-settings-member__caption {
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}
+
+.pb-settings-new-member {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-4);
+  width: 100%;
+  padding: var(--pb-space-8) var(--pb-space-7);
+  text-align: left;
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-pink);
+}
+
+.pb-settings-plus-badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--pb-pink-15);
+  color: var(--pb-pink);
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────── data ── */
+
+.pb-settings-danger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-4);
+}
+
+.pb-settings-danger__hint {
+  padding-inline: var(--pb-space-6);
+  text-align: center;
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}
+
+/* ────────────────────────────────────────────────────────────── about ── */
+
+.pb-settings-about {
+  padding: var(--pb-space-8) var(--pb-space-8) var(--pb-space-9);
+  font-size: var(--pb-text-sm);
+  line-height: 1.5;
+  color: var(--pb-text-muted);
+}
+
+.pb-settings-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pb-space-2);
+  margin-top: var(--pb-space-2);
+}
+
+.pb-settings-wordmark__text {
+  font-size: var(--pb-text-h2);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: -1px;
+  color: var(--pb-pink);
+  transform: rotate(-3deg);
+}
+
+.pb-settings-wordmark__tagline {
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}
+
+/* ─────────────────────────────────────────────────── add-member sheet ── */
+
+.pb-member-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-9);
+  padding: var(--pb-space-4) var(--pb-gutter) 0;
+}
+
+.pb-member-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.pb-member-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--pb-space-5);
+  padding: var(--pb-space-6);
+}
+
+.pb-member-icon-tile {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--pb-radius-md);
+  background: var(--pb-chip-bg);
+  border: 1px solid var(--pb-divider);
+  color: var(--pb-text-primary);
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-heavy);
+  transition:
+    background-color var(--pb-duration-fast) ease-out,
+    color var(--pb-duration-fast) ease-out;
+}
+
+.pb-member-icon-tile.is-selected {
+  background: var(--pb-pink);
+  border-color: transparent;
+  color: #fff;
+}
+
+.pb-member-delete-hint {
+  padding-inline: var(--pb-space-6);
+  text-align: center;
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}

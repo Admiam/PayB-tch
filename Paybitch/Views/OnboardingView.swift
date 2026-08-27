@@ -94,7 +94,7 @@ struct OnboardingView: View {
             TextField(text: $profileName, prompt: Text("Type your name").foregroundStyle(Paybitch.textMuted)) {
                 Text("")
             }
-            .textInputAutocapitalization(.words)
+            .paybitchNoAutocorrect()
             .font(.spaceGrotesk(22, weight: .bold))
             .foregroundStyle(Paybitch.textPrimary)
             .padding(22)
@@ -118,7 +118,7 @@ struct OnboardingView: View {
             TextField(text: $groupName, prompt: Text("e.g. Roommates").foregroundStyle(Paybitch.textMuted)) {
                 Text("")
             }
-            .textInputAutocapitalization(.words)
+            .paybitchNoAutocorrect()
             .font(.spaceGrotesk(22, weight: .bold))
             .foregroundStyle(Paybitch.textPrimary)
             .padding(22)
