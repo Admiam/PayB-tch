@@ -11,10 +11,16 @@ struct GroupItem: View {
     @EnvironmentObject var model: ModelData
     var group: Group
 
+    private var expenseCount: Int {
+        model.expenses(forGroup: group.id).count
+    }
+
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
             Text(group.name)
-            Text("\(model.expenses(forGroup: group.id).count) expenses")
+                .font(.headline)
+                .foregroundStyle(.primary)
+            Text("\(expenseCount) \(expenseCount == 1 ? "expense" : "expenses")")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -25,4 +31,5 @@ struct GroupItem: View {
     let modelData = ModelData()
     GroupItem(group: modelData.groups[0])
         .environmentObject(modelData)
+        .padding()
 }
