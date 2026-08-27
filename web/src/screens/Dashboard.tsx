@@ -22,6 +22,7 @@ import {
   Tiles,
 } from "@/components/dashboard";
 import { PaybitchMenu } from "@/components/Menu";
+import { useDelayedFlag } from "@/lib/useDelayedFlag";
 import { Icon } from "@/icons";
 import {
   AllSquaredCard,
@@ -52,6 +53,8 @@ export function Dashboard() {
   const selectGroup = useStore((s) => s.selectGroup);
   const lastError = useStore((s) => s.lastError);
   const clearError = useStore((s) => s.clearError);
+  const loading = useStore((s) => s.loading);
+  const loadedGroupId = useStore((s) => s.selectedGroupId);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingGroup, setEditingGroup] = useState<Group | null>(null);
@@ -70,6 +73,13 @@ export function Dashboard() {
     const chosen = groups.find((g) => g.id === selectedId);
     return chosen ?? groups[0] ?? null;
   }, [groups, selectedId]);
+
+  // True only while a different group's data is in flight — what is on
+  // screen then belongs to the group being navigated away from.
+  const switchingGroup =
+    loading && group !== null && loadedGroupId !== group.id;
+  const showProgress = useDelayedFlag(loading);
+  const showPending = useDelayedFlag(switchingGroup);
 
   const currency = toCurrency(group?.defaultCurrency);
 
@@ -114,6 +124,9 @@ export function Dashboard() {
   return (
     <>
       <div className="pb-app-bg" aria-hidden="true" />
+      {showProgress && (
+        <div className="pb-progress" role="status" aria-label="Loading" />
+      )}
 
       <div className="pb-app">
         {lastError && (
@@ -157,7 +170,11 @@ export function Dashboard() {
           {!group ? (
             <EmptyGroupsState />
           ) : (
-            <div className="pb-dashboard">
+            <div
+              className={`pb-dashboard${
+                showPending ? " pb-dashboard--pending" : ""
+              }`}
+            >
               <div>
                 <Tiles
                   myNet={myNet}

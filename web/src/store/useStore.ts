@@ -586,20 +586,37 @@ export const useStore = create<Store>((set, get) => {
         return;
       }
 
+      // Removed before the server is asked. Waiting for the round trip leaves
+      // the row sitting there after the tap, which reads as the app ignoring
+      // you; a delete that fails is rare and is put back below.
+      const index = get().expenses.findIndex((expense) => expense.id === id);
+      set((state) => ({
+        expenses: state.expenses.filter((expense) => expense.id !== id),
+      }));
+
+      const restore = () => {
+        if (!current) return;
+        set((state) => {
+          if (state.expenses.some((expense) => expense.id === id)) return state;
+          const expenses = [...state.expenses];
+          expenses.splice(index < 0 ? expenses.length : index, 0, current);
+          return { expenses };
+        });
+      };
+
       begin();
       try {
         await expensesApi.remove(groupId, id, current?.version);
         expenseClientIds.delete(id);
-        set((state) => ({
-          expenses: state.expenses.filter((expense) => expense.id !== id),
-        }));
         finish();
       } catch (error) {
         if (adoptServerVersion(set, groupId, error)) {
+          restore();
           finish();
           set({ lastError: CONFLICT_ON_DELETE });
           return;
         }
+        restore();
         finish(error, "Couldn't delete that expense.");
       }
     },

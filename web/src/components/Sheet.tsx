@@ -21,6 +21,13 @@ import { CloseButton } from "./primitives";
 /** Drag distance past which releasing dismisses instead of springing back. */
 const DISMISS_THRESHOLD = 120;
 
+/**
+ * How long the panel stays mounted after close is requested. Matches the
+ * close animation in sheet.css (`--pb-duration-press`); anything longer just
+ * leaves a finished, invisible sheet in the DOM holding the body scroll lock.
+ */
+const CLOSE_ANIMATION_MS = 220;
+
 export interface SheetProps {
   open: boolean;
   onClose: () => void;
@@ -43,7 +50,7 @@ export function Sheet({ open, onClose, title, action, children }: SheetProps) {
       setDragY(0);
       return;
     }
-    const timer = window.setTimeout(() => setVisible(false), 240);
+    const timer = window.setTimeout(() => setVisible(false), CLOSE_ANIMATION_MS);
     return () => window.clearTimeout(timer);
   }, [open]);
 
