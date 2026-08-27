@@ -1,0 +1,126 @@
+# The whole thing on one Debian VPS: web + API + database, three containers.
+#
+#   cp .env.example .env      # fill in the secrets
+#   docker compose up -d --build
+#   docker compose run --rm migrate     # first deploy, and after any schema change
+#
+# Only Caddy is exposed. The API and Postgres talk over the compose network and
+# publish nothing to the host, so the database is unreachable from the internet.
+
+services:
+  # Serves the built SPA and terminates TLS. Also proxies /v1 to the API, which
+  # puts the app and its API on one origin — CORS then never applies in
+  # production, and the browser's connect-src can stay 'self'.
+  web:
+    build: ./web
+    container_name: paybitch-web
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      API_UPSTREAM: api:8080
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    build: ./backend
+    container_name: paybitch-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=paybitch;Username=paybitch;Password=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}"
+
+      # Caddy terminates TLS and forwards; without this the rate limiter
+      # partitions on the proxy's address instead of the caller's.
+      ForwardedHeaders__KnownProxies__0: "172.16.0.0/12"
+
+      # Same-origin in production, so no browser origin needs allowing. Add the
+      # dev server's origin here only if you point a local build at this API.
+      Cors__AllowedOrigins__0: ${WEB_ORIGIN:-}
+
+      # Login codes. Without a host the app falls back to logging them, and
+      # nobody can sign in.
+      Smtp__Host: ${SMTP_HOST:?set SMTP_HOST}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__Username: ${SMTP_USERNAME:-}
+      Smtp__Password: ${SMTP_PASSWORD:-}
+      Smtp__FromAddress: ${SMTP_FROM:-noreply@holu.be}
+      Smtp__FromName: ${SMTP_FROM_NAME:-Paybitch}
+
+      # Peppers the stored OTP hashes. Losing it only invalidates codes in
+      # flight; leaking it weakens them against an offline attack on a DB dump.
+      EmailAuth__Pepper: ${OTP_PEPPER:?set OTP_PEPPER}
+
+      # Signing key for access tokens. Rotating it signs everyone out.
+      Jwt__SigningKeyPem: ${JWT_SIGNING_KEY_PEM:?set JWT_SIGNING_KEY_PEM}
+      Jwt__Issuer: ${JWT_ISSUER:-https://pay.holu.be}
+      Jwt__Audience: paybitch
+
+      App__PublicBaseUrl: ${PUBLIC_BASE_URL:-https://pay.holu.be}
+
+      # Without this the file store writes to a temp dir inside the container
+      # and every avatar disappears on the next deploy.
+      Blob__LocalRoot: /var/lib/paybitch/blobs
+    volumes:
+      - blobs:/var/lib/paybitch/blobs
+    logging: *logging
+
+  postgres:
+    image: postgres:16
+    container_name: paybitch-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: paybitch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: paybitch
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paybitch"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    logging: *logging
+
+  # One-shot schema migration. Not started by `up` — run it explicitly before
+  # the first deploy and after any schema change. The app never migrates itself.
+  migrate:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /src
+    profiles: ["migrate"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PAYBITCH_DB: "Host=postgres;Port=5432;Database=paybitch;Username=paybitch;Password=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}"
+    volumes:
+      - ./backend:/src
+    entrypoint:
+      - bash
+      - -c
+      - |
+        dotnet tool install --global dotnet-ef --version 10.* && \
+        /root/.dotnet/tools/dotnet-ef database update \
+          --project src/Paybitch.Infrastructure \
+          --startup-project src/Paybitch.Api
+    restart: "no"
+
+volumes:
+  caddy-data:
+  caddy-config:
+  pgdata:
+  blobs:

@@ -22,6 +22,7 @@ import {
   Tiles,
 } from "@/components/dashboard";
 import { PaybitchMenu } from "@/components/Menu";
+import { Icon } from "@/icons";
 import {
   AllSquaredCard,
   EmptyExpensesCard,
@@ -48,6 +49,9 @@ export function Dashboard() {
   const currentUserId = useStore((s) => s.currentUserId);
   const hasOnboarded = useStore((s) => s.hasOnboarded);
   const deleteExpense = useStore((s) => s.deleteExpense);
+  const selectGroup = useStore((s) => s.selectGroup);
+  const lastError = useStore((s) => s.lastError);
+  const clearError = useStore((s) => s.clearError);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingGroup, setEditingGroup] = useState<Group | null>(null);
@@ -112,6 +116,15 @@ export function Dashboard() {
       <div className="pb-app-bg" aria-hidden="true" />
 
       <div className="pb-app">
+        {lastError && (
+          <div className="pb-error" role="alert">
+            <span>{lastError}</span>
+            <button type="button" onClick={clearError} aria-label="Dismiss">
+              <Icon name="xmark" size={14} strokeWidth={3} />
+            </button>
+          </div>
+        )}
+
         <header className="pb-topbar">
           <Wordmark />
           <span className="pb-topbar__spacer" />
@@ -131,7 +144,10 @@ export function Dashboard() {
               name={g.name}
               memberCount={g.memberIds.length}
               active={g.id === group?.id}
-              onClick={() => setSelectedId(g.id)}
+              onClick={() => {
+                setSelectedId(g.id);
+                void selectGroup(g.id);
+              }}
             />
           ))}
           <NewGroupChip onClick={openNewGroup} />
@@ -211,7 +227,10 @@ export function Dashboard() {
         open={groupSheetOpen}
         editing={editingGroup}
         onClose={() => setGroupSheetOpen(false)}
-        onCreated={(created) => setSelectedId(created.id)}
+        onCreated={(created) => {
+          setSelectedId(created.id);
+          void selectGroup(created.id);
+        }}
       />
 
       {group && (

@@ -5,30 +5,46 @@
 # SITE_ADDRESS is injected by docker-compose. Set it to `:80` when testing
 # locally, since Let's Encrypt cannot validate localhost.
 {$SITE_ADDRESS} {
-	root * /srv
 	encode zstd gzip
 
-	# Hashed asset filenames can be cached indefinitely; they are replaced
-	# rather than mutated on each deploy.
-	@immutable path /assets/* /fonts/*
-	header @immutable Cache-Control "public, max-age=31536000, immutable"
+	# The API is served from this same origin, so the browser makes same-origin
+	# requests and CORS never enters the picture in production. The backend's
+	# CORS allowlist then only matters for local development against a dev server.
+	handle /v1/* {
+		reverse_proxy {$API_UPSTREAM:api:8080}
+	}
 
-	# The shell must never be cached, or a deploy leaves clients on the old
-	# bundle until they hard-refresh.
-	@html path / /index.html
-	header @html Cache-Control "no-cache"
+	# The invite landing page the backend renders for people without the app.
+	handle /i/* {
+		reverse_proxy {$API_UPSTREAM:api:8080}
+	}
+
+	handle {
+		root * /srv
+
+		# Hashed asset filenames can be cached indefinitely; they are replaced
+		# rather than mutated on each deploy.
+		@immutable path /assets/* /fonts/*
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+		# The shell must never be cached, or a deploy leaves clients on the old
+		# bundle until they hard-refresh.
+		@html path / /index.html
+		header @html Cache-Control "no-cache"
+
+		# Single-page app: unknown paths render the shell rather than 404, which
+		# is what makes /invite/<token> work as a real link.
+		try_files {path} /index.html
+		file_server
+	}
 
 	header {
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
-		# The app talks to no one: no API, no analytics, no CDN. Locking that
-		# down means a future dependency cannot quietly start phoning home.
+		# connect-src is 'self' because the API is same-origin here. Widen it only
+		# if the API ever moves to its own hostname.
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
 		-Server
 	}
-
-	# Single-page app: unknown paths render the shell rather than 404.
-	try_files {path} /index.html
-	file_server
 }

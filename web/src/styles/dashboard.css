@@ -367,3 +367,28 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────── errors ── */
+
+/* A failed call has to be visible: the store records one sentence, and this is
+   where the user reads it. Placed above the header so it cannot be scrolled
+   past unnoticed. */
+.pb-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pb-space-6);
+  margin: var(--pb-space-4) var(--pb-gutter) 0;
+  padding: var(--pb-space-6) var(--pb-space-7);
+  border-radius: var(--pb-radius-button);
+  background: color-mix(in srgb, var(--pb-negative) 18%, var(--pb-card));
+  border: 1px solid color-mix(in srgb, var(--pb-negative) 40%, transparent);
+  color: var(--pb-text-primary);
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-semibold);
+}
+
+.pb-error button {
+  margin-left: auto;
+  color: var(--pb-text-muted);
+  flex-shrink: 0;
+}

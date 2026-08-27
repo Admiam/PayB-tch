@@ -10,9 +10,11 @@
 import { useState } from "react";
 import { Avatar } from "@/components/Avatar";
 import { Sheet } from "@/components/Sheet";
+import { InviteSheet } from "./InviteSheet";
 import {
   DestructiveButton,
   FieldGroup,
+  InlineRow,
   PrimaryButton,
   TextButton,
 } from "@/components/primitives";
@@ -59,6 +61,7 @@ export function GroupEditorSheet({
   const [addingMember, setAddingMember] = useState(false);
   const [newMemberName, setNewMemberName] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [inviting, setInviting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [wasOpen, setWasOpen] = useState(false);
 
@@ -88,16 +91,17 @@ export function GroupEditorSheet({
         : [...current, id],
     );
 
-  const confirmNewMember = () => {
+  const confirmNewMember = async () => {
     const trimmed = newMemberName.trim();
     if (!trimmed) return;
-    const created = addMember({ name: trimmed, imageUrl: null });
+    const created = await addMember({ name: trimmed, imageUrl: null });
+    if (!created) return;
     setSelected((current) => [...current, created.id]);
     setNewMemberName("");
     setAddingMember(false);
   };
 
-  const save = () => {
+  const save = async () => {
     if (!canSave) return;
     setSaving(true);
     try {
@@ -107,9 +111,12 @@ export function GroupEditorSheet({
         defaultCurrency: currency,
       };
       if (editing) {
-        updateGroup({ ...editing, ...input });
+        await updateGroup({ ...editing, ...input });
       } else {
-        onCreated(addGroup(input));
+        const created = await addGroup(input);
+        // Null means the server refused; the store has already surfaced why.
+        if (!created) return;
+        onCreated(created);
       }
       onClose();
     } finally {
@@ -256,6 +263,18 @@ export function GroupEditorSheet({
           {"Toggle a member to add or remove them. You're always in."}
         </p>
 
+        {/* Only for a group that exists — an invite needs something to join. */}
+        {editing && (
+          <FieldGroup label="Invite">
+            <InlineRow
+              label="Invite people by link"
+              value="Share"
+              divider={false}
+              onClick={() => setInviting(true)}
+            />
+          </FieldGroup>
+        )}
+
         {editing &&
           (confirmingDelete ? (
             <div className="pb-confirm">
@@ -273,6 +292,15 @@ export function GroupEditorSheet({
             </DestructiveButton>
           ))}
       </div>
+
+      {editing && (
+        <InviteSheet
+          open={inviting}
+          groupId={editing.id}
+          groupName={editing.name}
+          onClose={() => setInviting(false)}
+        />
+      )}
     </Sheet>
   );
 }

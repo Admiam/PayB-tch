@@ -24,6 +24,37 @@ export interface DebtEdge {
 }
 
 /**
+ * Per-member owed amounts for one expense.
+ *
+ * Prefers the server's resolved shares when the expense came from the API: the
+ * server is the authority on how a remainder was distributed, and recomputing
+ * it here risks the web showing a different figure from the phone for the same
+ * expense. Falls back to computing locally for expenses that never round-tripped
+ * through the server.
+ *
+ * The server resolves shares in the expense's own currency, so they only apply
+ * directly when no conversion is happening.
+ */
+function sharesFor(
+  expense: Expense,
+  convertedAmount: number,
+  scale: number,
+): Record<string, number> {
+  // Only usable when the amount was not converted — the server resolved these
+  // against the original currency, so after an FX step they no longer sum to
+  // the displayed total.
+  if (expense.shares && convertedAmount === expense.amount) {
+    return expense.shares;
+  }
+  return computeShares(
+    expense.splitType,
+    convertedAmount,
+    expense.splitAmong,
+    scale,
+  );
+}
+
+/**
  * Net position per member, expressed in `target` currency.
  *
  * Each expense credits its payer the full amount and debits every participant
@@ -51,8 +82,7 @@ export function calculateBalances(
 
     add(e.paidBy, amount);
 
-    const shares = computeShares(e.splitType, amount, e.splitAmong, scale);
-    for (const [memberId, share] of Object.entries(shares)) {
+    for (const [memberId, share] of Object.entries(sharesFor(e, amount, scale))) {
       add(memberId, -share);
     }
   }

@@ -15,6 +15,7 @@ import {
   DEFAULT_CURRENCY,
   type CurrencyCode,
 } from "@/domain/types";
+import { useAuth } from "@/store/useAuth";
 import { useStore } from "@/store/useStore";
 
 /** The label format every currency picker in the app uses, e.g. "CZK Kč". */
@@ -24,11 +25,7 @@ const currencyLabel = (code: CurrencyCode) =>
 type Step = 0 | 1 | 2;
 
 export function Onboarding({ open }: { open: boolean }) {
-  const members = useStore((s) => s.members);
-  const currentUserId = useStore((s) => s.currentUserId);
-  const addMember = useStore((s) => s.addMember);
-  const updateMember = useStore((s) => s.updateMember);
-  const setCurrentUser = useStore((s) => s.setCurrentUser);
+  const setDisplayName = useAuth((s) => s.setDisplayName);
   const addGroup = useStore((s) => s.addGroup);
   const completeOnboarding = useStore((s) => s.completeOnboarding);
 
@@ -56,27 +53,33 @@ export function Onboarding({ open }: { open: boolean }) {
   const trimmedName = name.trim();
   const trimmedGroup = groupName.trim();
 
-  /** Rename the existing profile rather than accumulating a second "me". */
-  const saveProfile = () => {
+  /**
+   * Names the account, not a member row. Signing in already created the user;
+   * each group then issues them a participant derived from this name, so
+   * setting it here is what makes them recognisable everywhere at once.
+   */
+  const saveProfile = async () => {
     if (!trimmedName) return;
-    const existing = members.find((m) => m.id === currentUserId);
-    if (existing) {
-      updateMember({ ...existing, name: trimmedName });
-    } else {
-      setCurrentUser(addMember({ name: trimmedName, imageUrl: null }).id);
+    try {
+      await setDisplayName(trimmedName);
+    } catch {
+      // A failed rename should not trap someone on step 1 — they can fix the
+      // name in Settings, and the group is the part that matters here.
     }
     setStep(2);
   };
 
-  const saveGroupAndFinish = () => {
+  const saveGroupAndFinish = async () => {
     if (!trimmedGroup || saving) return;
     setSaving(true);
     try {
-      addGroup({
+      // The server adds the creator as owner, so no member list is needed.
+      const created = await addGroup({
         name: trimmedGroup,
-        memberIds: currentUserId ? [currentUserId] : [],
+        memberIds: [],
         defaultCurrency: currency,
       });
+      if (!created) return;
       completeOnboarding();
     } finally {
       setSaving(false);

@@ -93,6 +93,15 @@ export function computeShares(
     return distributeByWeights(total, members, weights, totalWeight, scale);
   }
 
+  if ("percentage" in split) {
+    // Basis points are just weights that happen to sum to 10000, so the same
+    // remainder-to-last distribution applies and the shares still total exactly.
+    const points = split.percentage;
+    const totalPoints = Object.values(points).reduce((a, b) => a + b, 0);
+    if (totalPoints <= 0) return {};
+    return distributeByWeights(total, members, points, totalPoints, scale);
+  }
+
   return distributeEqually(total, members, scale);
 }
 

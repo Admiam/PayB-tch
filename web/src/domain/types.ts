@@ -69,26 +69,32 @@ export interface Member {
 }
 
 /**
- * Wire-exact mirror of Swift's enum-with-associated-values encoding:
+ * Mirrors Swift's enum-with-associated-values encoding:
  *   .equal                       -> {"equal": {}}
  *   .exact(["u1": 70])           -> {"exact": {"u1": 70}}
  *   .shares(["u1": 2])           -> {"shares": {"u1": 2}}
  *
  * Note `equal` encodes as an empty **object**, not a bare string — that shape
  * is pinned by ExpenseCodableTests on the Swift side.
+ *
+ * `percentage` has no counterpart on the phone. It exists because the server
+ * supports it, so an expense authored on another client must still be readable
+ * here rather than breaking the screen. Basis points, so 50% is 5000.
  */
 export type SplitType =
   | { equal: Record<string, never> }
   | { exact: Record<string, number> }
-  | { shares: Record<string, number> };
+  | { shares: Record<string, number> }
+  | { percentage: Record<string, number> };
 
-export type SplitKind = "equal" | "exact" | "shares";
+export type SplitKind = "equal" | "exact" | "shares" | "percentage";
 
 export const SPLIT_EQUAL: SplitType = { equal: {} };
 
 export function splitKind(split: SplitType): SplitKind {
   if ("exact" in split) return "exact";
   if ("shares" in split) return "shares";
+  if ("percentage" in split) return "percentage";
   return "equal";
 }
 
@@ -112,6 +118,22 @@ export interface Expense {
   iconSymbol?: string | null;
   /** ISO-8601 timestamp. */
   createdAt: string;
+
+  /**
+   * Per-member owed amounts as resolved by the server, in major units.
+   *
+   * Present only for expenses that came from the API. When it is set the app
+   * uses it verbatim instead of recomputing the split, so the web and the
+   * phone can never disagree by a rounding step. Absent for locally-created
+   * expenses, where the split is computed from `splitType`.
+   */
+  shares?: Record<string, number>;
+
+  /**
+   * Server aggregate version, echoed back as `If-Match` on the next write.
+   * Absent for local expenses, which have no concurrency control.
+   */
+  version?: number;
 }
 
 /** Theme choice, mirroring the iOS AppearanceMode. */

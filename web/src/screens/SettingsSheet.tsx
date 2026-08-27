@@ -8,10 +8,10 @@
  *  - Reset: same asymmetry in reverse — uninstalling clears an iOS app's data
  *    for free; a browser tab needs an explicit "forget everything" action.
  *
- * The About section is rewritten for the same reason: there is no bundle
- * version to report here, so it carries a privacy note instead — worth
- * saying explicitly, since a site that stores money data would otherwise
- * reasonably be assumed to have a server behind it. This build has none.
+ * The About section replaces a bundle version, which a web build has no
+ * equivalent of, with a plain statement of where the data actually lives.
+ * That used to say "nothing is uploaded"; since groups became shareable it
+ * would be a lie, and a false privacy claim is worse than none.
  */
 
 import { useState } from "react";
@@ -26,6 +26,7 @@ import { Sheet } from "@/components/Sheet";
 import type { Appearance, Member } from "@/domain/types";
 import { Icon } from "@/icons";
 import { storage } from "@/lib/storage";
+import { useAuth } from "@/store/useAuth";
 import { useStore } from "@/store/useStore";
 import { AddMemberSheet } from "./AddMemberSheet";
 
@@ -48,6 +49,8 @@ export function SettingsSheet({
   const setAppearance = useStore((s) => s.setAppearance);
   const setCurrentUser = useStore((s) => s.setCurrentUser);
   const reset = useStore((s) => s.reset);
+  const signOut = useAuth((s) => s.signOut);
+  const account = useAuth((s) => s.user);
 
   const [pickerOpen, setPickerOpen] = useState(false);
   const [memberSheetOpen, setMemberSheetOpen] = useState(false);
@@ -93,7 +96,7 @@ export function SettingsSheet({
 
   const resetApp = () => {
     const confirmed = window.confirm(
-      "Reset the app? This permanently erases every group, member, and expense stored in this browser.",
+      "Reset the app on this device? You will be signed out. Your groups stay on the server.",
     );
     if (confirmed) reset();
   };
@@ -234,18 +237,34 @@ export function SettingsSheet({
             />
           </FieldGroup>
 
+          <FieldGroup label="Account">
+            <div className="pb-row">
+              <span>Signed in as</span>
+              <span className="pb-row__value">
+                {account?.email ?? account?.displayName ?? "—"}
+              </span>
+            </div>
+            <hr className="pb-divider" />
+            <InlineRow
+              label="Sign out"
+              divider={false}
+              onClick={() => void signOut()}
+            />
+          </FieldGroup>
+
           <div className="pb-settings-danger">
             <DestructiveButton onClick={resetApp}>Reset app</DestructiveButton>
             <p className="pb-settings-danger__hint">
-              Permanently erases every group, member, and expense stored in
-              this browser.
+              Signs you out and clears this device. Your groups stay on the
+              server — sign back in to reach them again.
             </p>
           </div>
 
           <FieldGroup label="About">
             <p className="pb-settings-about">
-              Your data lives only in this browser&rsquo;s local storage.
-              Nothing is ever uploaded to a server.
+              Your groups and expenses are stored on the Paybitch server, so
+              everyone you share a group with sees the same numbers. Only your
+              theme preference stays on this device.
             </p>
           </FieldGroup>
 

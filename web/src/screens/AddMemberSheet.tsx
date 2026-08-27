@@ -70,27 +70,34 @@ export function AddMemberSheet({
     iconSymbol,
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!canSave) return;
 
     if (editing) {
       const updated: Member = { ...editing, name: trimmedName, iconSymbol };
-      updateMember(updated);
+      await updateMember(updated);
       onSaved?.(updated);
     } else {
-      const created = addMember({ name: trimmedName, imageUrl: null, iconSymbol });
+      const created = await addMember({
+        name: trimmedName,
+        imageUrl: null,
+        iconSymbol,
+      });
+      // A null means the server refused; the store has already put a message in
+      // lastError, so closing silently would hide it.
+      if (!created) return;
       onSaved?.(created);
     }
     onClose();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!editing || isCurrentUser) return;
     const confirmed = window.confirm(
       `Remove ${editing.name}? They’ll be taken out of every group. This can’t be undone.`,
     );
     if (!confirmed) return;
-    deleteMember(editing.id);
+    await deleteMember(editing.id);
     onClose();
   };
 

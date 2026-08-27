@@ -1,0 +1,33 @@
+/* Sign-in — email + one-time code. No Swift screen exists for this one yet,
+   so nothing here is ported; it borrows the onboarding vocabulary (cover,
+   hero heading, footer CTA) instead of inventing a second visual language.
+   Only what onboarding.css has no equivalent for lives in this file. */
+
+/* The address the code went to, inline in the step-2 lede. */
+.pb-auth__email {
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-pink);
+  overflow-wrap: anywhere;
+}
+
+/* Spaced, centred digits read as a code rather than a plain text field. */
+.pb-auth__code-input {
+  text-align: center;
+  font-size: var(--pb-text-tile);
+  letter-spacing: 8px;
+}
+
+.pb-auth__hint {
+  font-size: var(--pb-text-label);
+  color: var(--pb-text-muted);
+}
+
+/* Negative counterpart to the positive `.pb-squared` tinted card. */
+.pb-auth__error {
+  padding: var(--pb-space-6) var(--pb-space-7);
+  border-radius: var(--pb-radius-md);
+  background: color-mix(in srgb, var(--pb-negative) 14%, transparent);
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-negative);
+}

@@ -1,0 +1,402 @@
+/* Group invitations: the sheet that mints links, and the public page someone
+   lands on when they open one. Same rule as the rest of the app — reach for a
+   token before inventing a number, and keep motion on transform/opacity. */
+
+/* ═════════════════════════════════════════════════════════════ the sheet ══ */
+
+.pb-invite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-9);
+  padding: var(--pb-space-4) var(--pb-gutter) 0;
+}
+
+.pb-invite__lede {
+  padding-inline: var(--pb-space-4);
+  font-size: var(--pb-text-chip);
+  line-height: 1.45;
+  color: var(--pb-text-muted);
+}
+
+.pb-invite__lede strong {
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-invite__error {
+  padding: var(--pb-space-6) var(--pb-space-8);
+  border-radius: var(--pb-radius-md);
+  background: color-mix(in srgb, var(--pb-negative) 14%, transparent);
+  font-size: var(--pb-text-sm);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-negative);
+}
+
+/* ── the one-time link ─────────────────────────────────────────────────── */
+
+/* Pink rim rather than pink fill: this has to out-shout every other card in
+   the sheet without making the token itself hard to read. */
+.pb-invite__fresh {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-9);
+  border-radius: var(--pb-radius-card);
+  background: var(--pb-card);
+  border: 1.5px solid var(--pb-pink);
+  box-shadow: var(--pb-shadow-pink-glow);
+  animation: pb-invite-pop var(--pb-duration-normal) var(--pb-ease-snappy);
+}
+
+.pb-invite__fresh-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-2);
+}
+
+.pb-invite__fresh-head .pb-label {
+  color: var(--pb-pink);
+}
+
+.pb-invite__fresh-title {
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tight);
+  color: var(--pb-text-primary);
+}
+
+/* A token has no word boundaries, so it needs `anywhere` to wrap at all. */
+.pb-invite__link {
+  display: block;
+  padding: var(--pb-space-6) var(--pb-space-7);
+  border-radius: var(--pb-radius-md);
+  background: var(--pb-chip-bg);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: var(--pb-text-sm);
+  line-height: 1.5;
+  color: var(--pb-text-primary);
+  overflow-wrap: anywhere;
+  -webkit-user-select: all;
+  user-select: all;
+}
+
+.pb-invite__copy-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  flex-wrap: wrap;
+}
+
+.pb-invite__meta {
+  font-size: var(--pb-text-label);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-muted);
+}
+
+.pb-invite__warn {
+  font-size: var(--pb-text-label);
+  line-height: 1.45;
+  color: var(--pb-text-muted);
+}
+
+@keyframes pb-invite-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── rows ──────────────────────────────────────────────────────────────── */
+
+.pb-invite__row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  width: 100%;
+  padding: var(--pb-space-6) var(--pb-space-8);
+  text-align: left;
+}
+
+.pb-invite__row--action {
+  transition: background-color var(--pb-duration-fast) ease-out;
+}
+
+.pb-invite__row--action:hover:not(:disabled),
+.pb-invite__row--action:focus-visible {
+  background: var(--pb-chip-bg);
+}
+
+.pb-invite__row--action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pb-invite__row-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--pb-pink-15);
+  color: var(--pb-pink);
+}
+
+.pb-invite__row-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.pb-invite__row-name {
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-invite__row-sub {
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-muted);
+}
+
+.pb-invite__row-sub.is-expired {
+  color: var(--pb-negative);
+}
+
+.pb-invite__row-cta {
+  flex-shrink: 0;
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-heavy);
+  color: var(--pb-pink);
+}
+
+/* The row is tight; the default primary padding would dominate it. */
+.pb-invite__row .pb-btn--primary {
+  flex-shrink: 0;
+  padding: var(--pb-space-4) var(--pb-space-7);
+  font-size: var(--pb-text-sm);
+}
+
+.pb-invite__revoke {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 34px;
+  height: 34px;
+  padding-inline: var(--pb-space-4);
+  border-radius: var(--pb-radius-md);
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-muted);
+  transition:
+    background-color var(--pb-duration-fast) ease-out,
+    color var(--pb-duration-fast) ease-out;
+}
+
+.pb-invite__revoke:hover:not(:disabled),
+.pb-invite__revoke:focus-visible {
+  background: color-mix(in srgb, var(--pb-negative) 14%, transparent);
+  color: var(--pb-negative);
+}
+
+.pb-invite__revoke:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.pb-invite__hint {
+  padding-inline: var(--pb-space-8);
+  margin-top: calc(-1 * var(--pb-space-5));
+  font-size: var(--pb-text-label);
+  line-height: 1.45;
+  color: var(--pb-text-muted);
+}
+
+.pb-invite__empty {
+  padding: var(--pb-space-8);
+  font-size: var(--pb-text-chip);
+  color: var(--pb-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════ the landing page ══ */
+
+/* Fixed, like onboarding's: the glow stays pinned to the viewport corner
+   rather than scrolling away with the card. */
+.pb-invite-landing__glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.2;
+  background: radial-gradient(
+    circle 460px at 100% 0%,
+    var(--pb-pink) 0%,
+    transparent 100%
+  );
+}
+
+.pb-invite-landing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pb-space-12);
+  min-height: 100dvh;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: calc(48px + env(safe-area-inset-top)) var(--pb-space-11)
+    calc(var(--pb-space-12) + env(safe-area-inset-bottom));
+}
+
+.pb-invite-landing__checking {
+  font-size: var(--pb-text-chip);
+  color: var(--pb-text-muted);
+}
+
+.pb-invite-landing__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pb-space-9);
+  width: 100%;
+  padding: var(--pb-space-12) var(--pb-space-11);
+  border-radius: 26px;
+  background: var(--pb-card);
+  box-shadow: var(--pb-shadow-tile);
+  animation: pb-invite-rise var(--pb-duration-normal) var(--pb-ease-snappy);
+}
+
+.pb-label.pb-invite-landing__eyebrow {
+  letter-spacing: var(--pb-track-hero);
+  color: var(--pb-pink);
+}
+
+.pb-invite-landing__heading {
+  font-size: var(--pb-text-h2);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tighter);
+  line-height: 1.12;
+  color: var(--pb-text-primary);
+}
+
+.pb-invite-landing__heading--fail {
+  font-size: var(--pb-text-section);
+  letter-spacing: var(--pb-track-tight);
+}
+
+.pb-invite-landing__who {
+  color: var(--pb-pink);
+}
+
+/* Underlined rather than recoloured — two pinks in one sentence would flatten
+   the emphasis the inviter's name is carrying. */
+.pb-invite-landing__group {
+  text-decoration: underline;
+  text-decoration-color: var(--pb-pink);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.pb-invite-landing__stats {
+  display: flex;
+  gap: var(--pb-space-13);
+}
+
+.pb-invite-landing__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-2);
+}
+
+.pb-invite-landing__stat dd {
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-tight);
+  color: var(--pb-text-primary);
+}
+
+.pb-invite-landing__claim {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pb-space-5);
+  width: 100%;
+  padding: var(--pb-space-7) var(--pb-space-8);
+  border-radius: var(--pb-radius-row);
+  background: color-mix(in srgb, var(--pb-positive) 22%, transparent);
+  font-size: var(--pb-text-sm);
+  line-height: 1.5;
+  color: var(--pb-text-primary);
+}
+
+.pb-invite-landing__claim-icon {
+  flex-shrink: 0;
+  color: var(--pb-positive);
+}
+
+.pb-invite-landing__claim strong {
+  font-weight: var(--pb-weight-bold);
+}
+
+.pb-invite-landing__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--pb-space-9) 0;
+  border-radius: 22px;
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: 0.2px;
+  color: #fff;
+}
+
+.pb-invite-landing__note {
+  font-size: var(--pb-text-sm);
+  line-height: 1.5;
+  color: var(--pb-text-muted);
+}
+
+.pb-invite-landing__note strong {
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-invite-landing__meta {
+  font-size: var(--pb-text-label);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-muted);
+}
+
+.pb-invite-landing__fail-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--pb-radius-row);
+  background: var(--pb-chip-bg);
+  color: var(--pb-text-muted);
+}
+
+@keyframes pb-invite-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-invite__fresh,
+  .pb-invite-landing__card {
+    animation: none;
+  }
+}
