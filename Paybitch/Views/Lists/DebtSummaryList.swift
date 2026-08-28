@@ -8,22 +8,10 @@
 import SwiftUI
 
 struct DebtSummaryList: View {
-    @Environment(ModelData.self) private var model
-    let group: Group
+    /// Derived once by the dashboard — see `GroupSummary`.
+    let summary: GroupSummary
 
-    private var displayCurrency: Currency {
-        Currency(rawValue: group.defaultCurrency.uppercased()) ?? .default
-    }
-
-    private var edges: [DebtEdge] {
-        let balances = BalanceCalculator.balances(
-            expenses: model.expenses(forGroup: group.id),
-            memberIds: group.memberIds,
-            in: displayCurrency,
-            fx: model.fx
-        )
-        return DebtSimplifier.simplify(balances)
-    }
+    private var edges: [DebtEdge] { summary.edges }
 
     var body: some View {
         if !edges.isEmpty {
@@ -38,7 +26,7 @@ struct DebtSummaryList: View {
                     Divider().background(Paybitch.divider)
                     VStack(spacing: 0) {
                         ForEach(edges) { edge in
-                            DebtRow(edge: edge, currency: displayCurrency)
+                            DebtRow(edge: edge, currency: summary.currency)
                         }
                     }
                     .padding(.top, 8)

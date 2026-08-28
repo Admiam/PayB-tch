@@ -6,27 +6,15 @@
 import SwiftUI
 
 struct Members: View {
-    @Environment(ModelData.self) private var model
     let group: Group
-
-    private var displayCurrency: Currency {
-        Currency(rawValue: group.defaultCurrency.uppercased()) ?? .default
-    }
-
-    private var balances: [MemberBalance] {
-        BalanceCalculator.balances(
-            expenses: model.expenses(forGroup: group.id),
-            memberIds: group.memberIds,
-            in: displayCurrency,
-            fx: model.fx
-        )
-    }
+    /// Derived once by the dashboard — see `GroupSummary`.
+    let summary: GroupSummary
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             PaybitchSectionHeader(title: "The Crew", badge: "\(group.memberIds.count)")
                 .padding(.horizontal, -8)
-            MemberList(balances: balances, currency: displayCurrency)
+            MemberList(balances: summary.balances, currency: summary.currency)
                 .background(
                     RoundedRectangle(cornerRadius: Paybitch.radiusCard, style: .continuous)
                         .fill(Paybitch.card)

@@ -110,36 +110,32 @@ struct ContentView: View {
 
     @ViewBuilder
     private func groupContent(group: Group) -> some View {
-        let displayCurrency = Currency(rawValue: group.defaultCurrency.uppercased()) ?? .default
-        let groupExpenses = model.expenses(forGroup: group.id)
-        let balances = BalanceCalculator.balances(
-            expenses: groupExpenses,
-            memberIds: group.memberIds,
-            in: displayCurrency,
+        // Derived once here and handed down. Each of these views used to compute
+        // it for itself, which walked the expense list eight times per render.
+        let summary = GroupSummary.make(
+            group: group,
+            expenses: model.expenses,
+            currentUserId: model.currentUserId,
             fx: model.fx
         )
-        let edges = DebtSimplifier.simplify(balances)
-        let myNet: Decimal = balances.first { $0.memberId == model.currentUserId }?.net ?? 0
-        let isEmpty = groupExpenses.isEmpty
-        let isSettled = !groupExpenses.isEmpty && myNet.magnitude < Decimal(string: "0.01")! && edges.isEmpty
 
         VStack(spacing: 0) {
             VStack(spacing: 10) {
-                Tiles(group: group)
+                Tiles(summary: summary)
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
 
-            if isEmpty {
+            if summary.isEmpty {
                 EmptyExpensesCard { showAddExpense = true }
-            } else if isSettled {
+            } else if summary.isSettled {
                 AllSquaredCard()
             }
 
-            if !isEmpty {
-                Members(group: group)
+            if !summary.isEmpty {
+                Members(group: group, summary: summary)
                     .padding(.horizontal, 16)
-                DebtSummaryList(group: group)
+                DebtSummaryList(summary: summary)
                     .padding(.horizontal, 16)
                 DebtsList(group: group)
                     .padding(.horizontal, 16)
