@@ -77,6 +77,13 @@ public sealed class OperationalConstants
     /// <summary>Groups a user may belong to — Appendix A: 200.</summary>
     public int GroupsPerUser { get; set; } = 200;
 
+    /// <summary>
+    /// Cross-group identity pairings one user may store (E11). Generous against any real ledger —
+    /// 200 groups × 50 members is the hard ceiling on rows a caller could even name — and present so
+    /// the payload stays bounded rather than to ration a feature.
+    /// </summary>
+    public int SharedLedgerLinksPerUser { get; set; } = 1000;
+
     /// <summary>Max notes length on expenses/settlements ⇒ <c>422 notes_too_long</c> — Appendix A: 2000 chars.</summary>
     public int NotesMaxLength { get; set; } = 2000;
 

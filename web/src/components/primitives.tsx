@@ -262,6 +262,42 @@ export function InlineRow({
   );
 }
 
+/**
+ * On/off switch — the web stand-in for SwiftUI's `Toggle`.
+ *
+ * A real `input[type=checkbox]` under the paint, so the label, the keyboard and
+ * assistive tech all work without being re-implemented. The visible track is a
+ * sibling the CSS styles off `:checked`.
+ */
+export function Switch({
+  checked,
+  onChange,
+  label,
+  disabled = false,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  /** Announced to a screen reader; the visible text is the row around it. */
+  label: string;
+  disabled?: boolean;
+}) {
+  return (
+    <span className="pb-switch">
+      <input
+        type="checkbox"
+        className="pb-switch__input"
+        checked={checked}
+        disabled={disabled}
+        aria-label={label}
+        onChange={(event) => onChange(event.currentTarget.checked)}
+      />
+      <span className="pb-switch__track" aria-hidden="true">
+        <span className="pb-switch__knob" />
+      </span>
+    </span>
+  );
+}
+
 /* ───────────────────────────────────────────────────────────────── tile ── */
 
 export function Tile({

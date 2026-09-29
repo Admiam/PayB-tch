@@ -70,7 +70,8 @@ public sealed class MembersModule : IEndpointModule
     }
 
     // --- GET /members ---
-    private static async Task<IResult> ListMembers(HttpContext http, AppDbContext db, CancellationToken ct)
+    private static async Task<IResult> ListMembers(
+        HttpContext http, AppDbContext db, MemberLinkKeys links, CancellationToken ct)
     {
         var membership = http.GetMembership();
         var includeDeleted = string.Equals(http.Request.Query["includeDeleted"], "true", StringComparison.OrdinalIgnoreCase);
@@ -83,7 +84,10 @@ public sealed class MembersModule : IEndpointModule
             .OrderBy(m => m.CreatedAt).ThenBy(m => m.Id)
             .ToListAsync(ct);
 
-        return Results.Ok(members.Select(MemberResponse.From).ToList());
+        // The roster is the one read where cross-group identity matters: it is what a client pairs
+        // against, so it is the only place that spends the HMAC.
+        var callerUserId = http.GetUserId();
+        return Results.Ok(members.Select(m => MemberResponse.From(m, callerUserId, links)).ToList());
     }
 
     // --- POST /members (add ghost) ---
@@ -113,7 +117,7 @@ public sealed class MembersModule : IEndpointModule
         await db.SaveChangesAsync(ct);
 
         ConcurrencyHeaders.SetETag(http.Response, member.Version);
-        return Results.Created($"/v1/groups/{membership.GroupId}/members/{member.Id}", MemberResponse.From(member));
+        return Results.Created($"/v1/groups/{membership.GroupId}/members/{member.Id}", MemberResponse.From(member, http.GetUserId()));
     }
 
     // --- PATCH /members/{memberId} (self) ---
@@ -152,7 +156,7 @@ public sealed class MembersModule : IEndpointModule
         }
 
         ConcurrencyHeaders.SetETag(http.Response, member.Version);
-        return Results.Ok(MemberResponse.From(member));
+        return Results.Ok(MemberResponse.From(member, http.GetUserId()));
     }
 
     // --- PUT /members/{memberId}/role ---
@@ -171,7 +175,7 @@ public sealed class MembersModule : IEndpointModule
             return Problems.NotFound();
 
         if (member.Version != ifMatch)
-            return Problems.VersionConflict(MemberResponse.From(member));
+            return Problems.VersionConflict(MemberResponse.From(member, http.GetUserId()));
 
         var newRole = req.Role;
 
@@ -183,7 +187,7 @@ public sealed class MembersModule : IEndpointModule
         if (member.Role == newRole)
         {
             ConcurrencyHeaders.SetETag(http.Response, member.Version);
-            return Results.Ok(MemberResponse.From(member));
+            return Results.Ok(MemberResponse.From(member, http.GetUserId()));
         }
 
         // Granting or revoking owner/admin requires an owner caller (§3.8.2).
@@ -205,7 +209,7 @@ public sealed class MembersModule : IEndpointModule
         await db.SaveChangesAsync(ct);
 
         ConcurrencyHeaders.SetETag(http.Response, member.Version);
-        return Results.Ok(MemberResponse.From(member));
+        return Results.Ok(MemberResponse.From(member, http.GetUserId()));
     }
 
     // --- POST /members/me/leave ---
@@ -241,7 +245,7 @@ public sealed class MembersModule : IEndpointModule
         await db.SaveChangesAsync(ct);
 
         ConcurrencyHeaders.SetETag(http.Response, member.Version);
-        return Results.Ok(MemberResponse.From(member));
+        return Results.Ok(MemberResponse.From(member, http.GetUserId()));
     }
 
     // --- DELETE /members/{memberId} (remove) ---

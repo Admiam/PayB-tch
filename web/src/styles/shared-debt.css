@@ -1,0 +1,417 @@
+/* The shared-debt section and its setup sheet.
+
+   Same material and tokens as the rest of the app, deliberately arranged
+   differently: the group card leads with a drawing, this one leads with a figure
+   and then names its inputs. Two cards that looked alike would invite reading
+   one number as the other. */
+
+/* ────────────────────────────────────────────────────────────── section ── */
+
+.pb-shared {
+  margin-inline: var(--pb-gutter);
+  padding: var(--pb-space-4);
+  border-radius: var(--pb-radius-card);
+}
+
+.pb-shared__setup {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pb-space-3);
+  padding: var(--pb-space-3) var(--pb-space-6);
+  border-radius: var(--pb-radius-chip);
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  letter-spacing: var(--pb-track-wide);
+  text-transform: uppercase;
+  color: var(--pb-text-primary);
+}
+
+/* The hero carries a pink rail rather than a heavier background: the card is
+   already glass, and a second fill inside it reads as a nested card. */
+.pb-shared__hero {
+  position: relative;
+  padding: var(--pb-space-6) var(--pb-space-6) var(--pb-space-6) var(--pb-space-9);
+}
+
+.pb-shared__hero::before {
+  content: "";
+  position: absolute;
+  top: var(--pb-space-6);
+  bottom: var(--pb-space-6);
+  left: var(--pb-space-4);
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    var(--pb-pink),
+    color-mix(in srgb, var(--pb-pink) 20%, transparent)
+  );
+}
+
+.pb-shared__scope {
+  display: block;
+  color: var(--pb-text-muted);
+}
+
+.pb-shared__amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--pb-space-3);
+  margin-top: var(--pb-space-2);
+  color: var(--pb-pink);
+}
+
+.pb-shared__amount--settled {
+  font-size: var(--pb-text-section);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tight);
+  color: var(--pb-positive);
+}
+
+.pb-shared__figure {
+  font-size: var(--pb-text-h2);
+  font-weight: var(--pb-weight-heavy);
+  letter-spacing: var(--pb-track-tighter);
+  line-height: 1;
+}
+
+.pb-shared__symbol {
+  font-size: var(--pb-text-lg);
+  font-weight: var(--pb-weight-bold);
+  opacity: 0.75;
+}
+
+.pb-shared__caption,
+.pb-shared__hint {
+  display: block;
+  margin-top: var(--pb-space-2);
+  font-size: var(--pb-text-sm);
+  color: var(--pb-text-muted);
+}
+
+/* Which groups went in. A pooled total whose inputs are invisible cannot be
+   checked, so this strip is not decoration. */
+.pb-shared__groups {
+  display: flex;
+  gap: var(--pb-space-3);
+  padding: 0 var(--pb-space-6) var(--pb-space-6) var(--pb-space-9);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pb-shared__groups::-webkit-scrollbar {
+  display: none;
+}
+
+.pb-shared__group {
+  flex-shrink: 0;
+  padding: var(--pb-space-2) var(--pb-space-5);
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-chip-bg);
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+}
+
+.pb-shared__rows {
+  padding-top: var(--pb-space-4);
+}
+
+.pb-shared__row {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-5);
+  padding: var(--pb-space-5) var(--pb-space-6);
+}
+
+.pb-shared__names {
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-shared__row-amount {
+  margin-left: auto;
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-heavy);
+  color: var(--pb-text-primary);
+  white-space: nowrap;
+}
+
+.pb-shared__note {
+  padding: var(--pb-space-4) var(--pb-space-6) var(--pb-space-3);
+  font-size: var(--pb-text-caption);
+  line-height: 1.5;
+  color: var(--pb-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────── invite variant ── */
+
+.pb-shared--invite {
+  padding: var(--pb-space-9);
+}
+
+.pb-shared__pitch {
+  font-size: var(--pb-text-sm);
+  line-height: 1.55;
+  color: var(--pb-text-primary);
+}
+
+.pb-shared__pitch--dim {
+  margin-top: var(--pb-space-4);
+  color: var(--pb-text-muted);
+}
+
+.pb-shared__cta {
+  margin-top: var(--pb-space-8);
+  padding: var(--pb-space-6) var(--pb-space-10);
+  border-radius: var(--pb-radius-button);
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: #fff;
+}
+
+/* ──────────────────────────────────────────────────────────────── sheet ── */
+
+.pb-shared-sheet__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pb-space-5);
+  margin-bottom: var(--pb-space-8);
+  padding: var(--pb-space-6) var(--pb-space-7);
+  border-radius: var(--pb-radius-row);
+  background: color-mix(in srgb, var(--pb-negative) 18%, var(--pb-card));
+  border: 1px solid color-mix(in srgb, var(--pb-negative) 40%, transparent);
+  font-size: var(--pb-text-sm);
+  line-height: 1.45;
+}
+
+.pb-shared-sheet__error button {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--pb-text-muted);
+}
+
+.pb-shared-sheet__group {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+  padding: var(--pb-space-6) var(--pb-space-8);
+  cursor: pointer;
+}
+
+.pb-shared-sheet__group-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+}
+
+.pb-shared-sheet__group-name {
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pb-shared-sheet__group-meta {
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}
+
+.pb-shared-sheet__hint {
+  padding: var(--pb-space-5) var(--pb-space-4) 0;
+  font-size: var(--pb-text-sm);
+  line-height: 1.55;
+  color: var(--pb-text-muted);
+}
+
+.pb-shared-sheet__hint--tight {
+  padding: 0 var(--pb-space-4) var(--pb-space-6);
+}
+
+.pb-shared-sheet__pairing {
+  padding: var(--pb-space-6) var(--pb-space-4);
+}
+
+.pb-shared-sheet__suggest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pb-space-4);
+  width: 100%;
+  margin-bottom: var(--pb-space-8);
+  padding: var(--pb-space-6);
+  border-radius: var(--pb-radius-button);
+  font-size: var(--pb-text-button);
+  font-weight: var(--pb-weight-bold);
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────────────────────  pairing ── */
+
+.pb-pairing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-3);
+}
+
+.pb-pairing__person {
+  padding: var(--pb-space-6);
+  border-radius: var(--pb-radius-row);
+  background: var(--pb-chip-bg);
+}
+
+.pb-pairing__head {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-6);
+}
+
+.pb-pairing__identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+}
+
+.pb-pairing__name {
+  font-size: var(--pb-text-row);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pb-pairing__aliases {
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+}
+
+.pb-pairing__add {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: var(--pb-space-3) var(--pb-space-6);
+  border-radius: var(--pb-radius-chip);
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-pairing__add:disabled {
+  opacity: 0.5;
+}
+
+/* The chips are the answer to "where does this person appear", which is the
+   thing a user checks before trusting a merge. */
+.pb-pairing__rows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pb-space-3);
+  margin-top: var(--pb-space-5);
+}
+
+.pb-pairing__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pb-space-2);
+  padding: var(--pb-space-2) var(--pb-space-4);
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-card);
+  font-size: var(--pb-text-caption);
+  font-weight: var(--pb-weight-semibold);
+  color: var(--pb-text-primary);
+}
+
+.pb-pairing__chip-group {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pb-pairing__chip-lock {
+  display: inline-flex;
+  color: var(--pb-positive);
+}
+
+.pb-pairing__chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--pb-chip-bg);
+  color: var(--pb-text-muted);
+  transition: color var(--pb-duration-fast) ease-out,
+    background var(--pb-duration-fast) ease-out;
+}
+
+.pb-pairing__chip-remove:hover:not(:disabled),
+.pb-pairing__chip-remove:focus-visible {
+  background: var(--pb-pink);
+  color: #fff;
+}
+
+.pb-pairing__picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-2);
+  margin-top: var(--pb-space-6);
+  padding-top: var(--pb-space-5);
+  border-top: 1px solid var(--pb-divider);
+}
+
+.pb-pairing__candidate {
+  display: flex;
+  align-items: center;
+  gap: var(--pb-space-5);
+  padding: var(--pb-space-4);
+  border-radius: var(--pb-radius-md);
+  text-align: left;
+  transition: background var(--pb-duration-fast) ease-out;
+}
+
+.pb-pairing__candidate:hover:not(:disabled),
+.pb-pairing__candidate:focus-visible {
+  background: var(--pb-card);
+}
+
+.pb-pairing__candidate-name {
+  font-size: var(--pb-text-chip);
+  font-weight: var(--pb-weight-bold);
+  color: var(--pb-text-primary);
+}
+
+.pb-pairing__candidate-groups {
+  margin-left: auto;
+  max-width: 45%;
+  font-size: var(--pb-text-caption);
+  color: var(--pb-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pb-pairing__empty {
+  padding: var(--pb-space-4);
+  font-size: var(--pb-text-caption);
+  line-height: 1.5;
+  color: var(--pb-text-muted);
+}
+
+/* Matches the breakpoint where the dashboard drops its own side gutters. */
+@media (min-width: 900px) {
+  .pb-shared {
+    margin-inline: 0;
+  }
+}

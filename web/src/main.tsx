@@ -10,6 +10,7 @@ import "./styles/onboarding.css";
 import "./styles/expense.css";
 import "./styles/detail.css";
 import "./styles/settings.css";
+import "./styles/shared-debt.css";
 import "./styles/activity.css";
 import "./styles/auth.css";
 import "./styles/invite.css";

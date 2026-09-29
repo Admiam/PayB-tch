@@ -252,11 +252,20 @@ describe("currentUserId", () => {
     iconSymbol: null,
     role: "member" as const,
     isGhost: true,
+    isMe: false,
+    // A ghost has no account, so the server has no cross-group handle to offer.
+    linkKey: null,
     version: 1,
   });
   const real = (id: string, name: string) => ({
     ...ghost(id, name),
     isGhost: false,
+    linkKey: `lk-${id}`,
+  });
+  /** The row the server flagged as the caller's. */
+  const mine = (id: string, name: string) => ({
+    ...real(id, name),
+    isMe: true,
   });
 
   beforeEach(() => {
@@ -284,6 +293,18 @@ describe("currentUserId", () => {
 
     await useStore.getState().selectGroup("g1");
 
+    expect(useStore.getState().currentUserId).toBe("m-me");
+  });
+
+  it("trusts the server's own flag over any name", async () => {
+    vi.mocked(groupsApi.members).mockResolvedValueOnce([
+      real("m-bob", "Adam"),
+      mine("m-me", "Renamed Me"),
+    ]);
+
+    await useStore.getState().selectGroup("g1");
+
+    // Name matching would have picked m-bob here, and been wrong.
     expect(useStore.getState().currentUserId).toBe("m-me");
   });
 

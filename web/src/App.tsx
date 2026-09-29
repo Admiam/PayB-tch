@@ -3,6 +3,7 @@ import { Dashboard } from "@/screens/Dashboard";
 import { InviteLanding } from "@/screens/InviteLanding";
 import { SignIn } from "@/screens/SignIn";
 import { useAuth } from "@/store/useAuth";
+import { useSharedLedger } from "@/store/useSharedLedger";
 import { useStore } from "@/store/useStore";
 
 /** Where an invite token waits while the recipient signs in. */
@@ -13,6 +14,7 @@ export default function App(): ReactElement {
   const restore = useAuth((s) => s.restore);
   const appearance = useStore((s) => s.appearance);
   const load = useStore((s) => s.load);
+  const loadSharedLedger = useSharedLedger((s) => s.load);
 
   const pathToken = inviteTokenFromPath(window.location.pathname);
 
@@ -34,10 +36,15 @@ export default function App(): ReactElement {
     else root.setAttribute("data-theme", appearance);
   }, [appearance]);
 
-  // Data only exists once there is a session to fetch it with.
+  // Data only exists once there is a session to fetch it with. The shared-debt
+  // configuration is fetched alongside, not on demand: the dashboard has to know
+  // whether there is a pooled view before it can decide what to render, and
+  // asking later would mean a section that pops in after the fact.
   useEffect(() => {
-    if (status === "signed-in") void load();
-  }, [status, load]);
+    if (status !== "signed-in") return;
+    void load();
+    void loadSharedLedger();
+  }, [status, load, loadSharedLedger]);
 
   // Someone who signed in *because* of an invite should be taken to it rather
   // than dropped on an empty dashboard wondering what happened.

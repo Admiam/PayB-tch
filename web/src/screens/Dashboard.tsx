@@ -22,7 +22,9 @@ import {
   Tiles,
 } from "@/components/dashboard";
 import { PaybitchMenu } from "@/components/Menu";
+import { SharedDebt } from "@/components/SharedDebt";
 import { useDelayedFlag } from "@/lib/useDelayedFlag";
+import { useSharedBalanceSync, useSharedDebt } from "@/lib/useSharedDebt";
 import { Icon } from "@/icons";
 import {
   AllSquaredCard,
@@ -37,6 +39,7 @@ import { AddExpenseSheet } from "./AddExpenseSheet";
 import { ExpenseDetailSheet } from "./ExpenseDetailSheet";
 import { GroupEditorSheet } from "./GroupEditorSheet";
 import { SettingsSheet } from "./SettingsSheet";
+import { SharedDebtSheet } from "./SharedDebtSheet";
 import { ActivitySheet } from "./ActivitySheet";
 import { Onboarding } from "./Onboarding";
 
@@ -64,6 +67,12 @@ export function Dashboard() {
   const [detailExpense, setDetailExpense] = useState<Expense | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
+  const [sharedOpen, setSharedOpen] = useState(false);
+
+  // The pooled view spans groups this screen is not showing, so it keeps its own
+  // data and its own refresh trigger.
+  const shared = useSharedDebt();
+  useSharedBalanceSync();
 
   // Derived rather than synced by an effect: if the stored choice no longer
   // exists — the group was deleted, or nothing has been picked yet — fall back
@@ -143,9 +152,11 @@ export function Dashboard() {
           <span className="pb-topbar__spacer" />
           <PaybitchMenu
             hasSelectedGroup={Boolean(group)}
+            canShareDebt={groups.length >= 2}
             onEditGroup={openEditGroup}
             onNewGroup={openNewGroup}
             onSearch={() => setActivityOpen(true)}
+            onSharedDebt={() => setSharedOpen(true)}
             onSettings={() => setSettingsOpen(true)}
           />
         </header>
@@ -205,6 +216,8 @@ export function Dashboard() {
                     currency={currency}
                   />
                 )}
+
+                <SharedDebt view={shared} onSetUp={() => setSharedOpen(true)} />
               </div>
 
               <div>
@@ -276,6 +289,8 @@ export function Dashboard() {
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
       />
+
+      <SharedDebtSheet open={sharedOpen} onClose={() => setSharedOpen(false)} />
 
       {group && (
         <ActivitySheet

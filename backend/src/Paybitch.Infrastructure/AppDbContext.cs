@@ -39,6 +39,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<BlobDeletion> BlobDeletions => Set<BlobDeletion>();             // E7
     public DbSet<RateLimitCounter> RateLimitCounters => Set<RateLimitCounter>(); // E8
     public DbSet<Comment> Comments => Set<Comment>();                           // E10a
+    public DbSet<SharedLedgerGroup> SharedLedgerGroups => Set<SharedLedgerGroup>();  // E11
+    public DbSet<SharedLedgerLink> SharedLedgerLinks => Set<SharedLedgerLink>();     // E11
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

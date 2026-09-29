@@ -13,6 +13,7 @@
 
 import {
   ArrowDown,
+  ArrowLeftRight,
   ArrowRight,
   ArrowUp,
   Balloon,
@@ -251,6 +252,7 @@ const SYMBOLS: Record<string, IconComponent> = {
   xmark: X,
   "chevron.right": ChevronRight,
   "arrow.right": ArrowRight,
+  "arrow.left.arrow.right": ArrowLeftRight,
   "arrow.down": ArrowDown,
   "arrow.up": ArrowUp,
   "checkmark.circle.fill": CircleCheckBig,

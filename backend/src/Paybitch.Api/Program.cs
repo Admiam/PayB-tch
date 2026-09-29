@@ -11,6 +11,7 @@ using Paybitch.Api.Common.Options;
 using Paybitch.Api.Common.RateLimiting;
 using Paybitch.Api.Common.Validation;
 using Paybitch.Api.Features.Activity;
+using Paybitch.Api.Features.Groups.Support;
 using Paybitch.Api.Features.Notifications.Fanout;
 using Paybitch.Api.Features.Platform;
 using Paybitch.Api.Features.Recurring;
@@ -84,6 +85,11 @@ try
     builder.Services.AddRecurringScheduler();
     // E5 notification fan-out scheduler (seeds + self-heals the notification.fanout job loop).
     builder.Services.AddHostedService<NotificationFanoutScheduler>();
+
+    // --- Cross-group member identity (§3.8): the HMAC issuer behind a roster's linkKey. A plain
+    // service with no scan convention, and a singleton because it holds parsed key material and warns
+    // once when the secret is missing rather than on every roster read. ---
+    builder.Services.AddSingleton<MemberLinkKeys>();
 
     // --- Auth (§4.1): ES256 keys, token issuance, current-user accessor, epoch cache ---
     builder.Services.AddSingleton<Es256KeyProvider>();

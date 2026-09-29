@@ -184,6 +184,28 @@ export function formatAmountFull(value: number, currency: CurrencyCode): string 
 }
 
 /**
+ * Minor units as the API writes them — a string, never a number — to major
+ * units.
+ *
+ * The API sends money as integer minor units in a JSON *string* so a large
+ * amount cannot lose precision to a double on the way in. Reading it back to
+ * the app's major-unit `number` is exact for every amount a person will ever
+ * split, and the division is by a power of ten renormalised through
+ * `toPrecision` so CZK (scale 0) and EUR (scale 2) both land on the nose.
+ *
+ * Unparseable input reads as zero rather than NaN: a balance row the server
+ * garbled should leave the rest of the sheet legible.
+ */
+export function fromMinorUnits(minor: string, currency: CurrencyCode): number {
+  const units = Number(minor);
+  if (!Number.isFinite(units)) return 0;
+
+  const scale = decimalsFor(currency);
+  if (scale === 0) return units;
+  return Number((units / 10 ** scale).toPrecision(15));
+}
+
+/**
  * Parses user input from an amount field. Accepts both decimal separators
  * because a Czech keyboard produces a comma and the numeric keypad a dot.
  */

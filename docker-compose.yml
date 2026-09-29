@@ -26,6 +26,12 @@ services:
     volumes:
       - caddy-data:/data
       - caddy-config:/config
+    networks:
+      # `default` keeps Caddy talking to the API; `edge` is the shared network
+      # the separately-deployed trip planner also joins, so `reverse_proxy
+      # trip:3000` resolves across the two compose projects.
+      - default
+      - edge
     logging: &logging
       driver: json-file
       options:
@@ -64,6 +70,12 @@ services:
       # Peppers the stored OTP hashes. Losing it only invalidates codes in
       # flight; leaking it weakens them against an offline attack on a DB dump.
       EmailAuth__Pepper: ${OTP_PEPPER:?set OTP_PEPPER}
+
+      # Derives the opaque cross-group handle behind shared debt. Optional, so a
+      # deployment that predates the feature still boots after a pull — the API
+      # falls back to a published dev constant and says so in the log. Rotating
+      # it is harmless: the handles are recomputed per request.
+      Identity__LinkKeySigningKey: ${IDENTITY_LINK_KEY:-}
 
       # Signing key for access tokens. Rotating it signs everyone out.
       Jwt__SigningKeyPem: ${JWT_SIGNING_KEY_PEM:?set JWT_SIGNING_KEY_PEM}
@@ -124,3 +136,10 @@ volumes:
   caddy-config:
   pgdata:
   blobs:
+
+networks:
+  # Owned by neither project, so either can be deployed, rebuilt or torn down
+  # without disturbing the other. Created by hand, once:
+  #   docker network create edge
+  edge:
+    external: true

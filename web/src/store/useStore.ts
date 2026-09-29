@@ -42,6 +42,15 @@ interface State {
   groups: GroupWithMeta[];
   /** The selected group's roster. Empty until a group is selected. */
   members: MemberWithMeta[];
+  /**
+   * Every group's roster, by group id.
+   *
+   * `load` already fetches all of them — `Group.memberIds` needs them, and the
+   * list endpoint carries only a headcount — and used to throw them away. The
+   * shared ledger needs names, icons and link keys for groups that are not the
+   * open one, so they are kept instead of re-fetched.
+   */
+  rosters: Record<string, MemberWithMeta[]>;
   /** The selected group's expenses. */
   expenses: Expense[];
   /** The caller's *member id in the selected group*. */
@@ -53,6 +62,16 @@ interface State {
   loading: boolean;
   /** Transient, surfaced as a dismissible banner. */
   lastError: string | null;
+  /**
+   * Bumped by every expense this client writes.
+   *
+   * The shared view's numbers come from the server's per-group balance sheets,
+   * which this store does not hold — so nothing else would tell it that a total
+   * it is showing has just gone stale. Deliberately *not* bumped by reads:
+   * opening a group changes no balance, and a counter that moved on navigation
+   * would have the shared view refetching every group on every tap.
+   */
+  ledgerRevision: number;
 }
 
 interface Actions {
@@ -91,6 +110,7 @@ type SetState = (
 const initialState: State = {
   groups: [],
   members: [],
+  rosters: {},
   expenses: [],
   currentUserId: null,
   selectedGroupId: null,
@@ -100,6 +120,7 @@ const initialState: State = {
   appearance: storage.loadAppearance(),
   loading: false,
   lastError: null,
+  ledgerRevision: 0,
 };
 
 const CONFLICT_ON_EDIT =
@@ -202,6 +223,9 @@ export const useStore = create<Store>((set, get) => {
 
         set({
           groups,
+          rosters: Object.fromEntries(
+            listed.map((group, index) => [group.id, rosters[index]]),
+          ),
           // Once there is a group to look at, onboarding is behind the user.
           hasOnboarded: get().hasOnboarded || groups.length > 0,
         });
@@ -358,10 +382,13 @@ export const useStore = create<Store>((set, get) => {
               ? { ...saved, memberIds, memberCount: memberIds.length }
               : candidate,
           ),
-          members:
-            state.selectedGroupId === group.id
-              ? state.members.filter((member) => !removed.includes(member.id))
-              : state.members,
+          ...withRoster(
+            state,
+            group.id,
+            rosterOf(state, group.id).filter(
+              (member) => !removed.includes(member.id),
+            ),
+          ),
         }));
         finish();
 
@@ -421,7 +448,7 @@ export const useStore = create<Store>((set, get) => {
         );
 
         set((state) => ({
-          members: [...state.members, created],
+          ...withRoster(state, groupId, [...rosterOf(state, groupId), created]),
           groups: state.groups.map((group) =>
             group.id === groupId
               ? {
@@ -456,8 +483,12 @@ export const useStore = create<Store>((set, get) => {
           iconSymbol: member.iconSymbol ?? null,
         });
         set((state) => ({
-          members: state.members.map((candidate) =>
-            candidate.id === saved.id ? saved : candidate,
+          ...withRoster(
+            state,
+            groupId,
+            rosterOf(state, groupId).map((candidate) =>
+              candidate.id === saved.id ? saved : candidate,
+            ),
           ),
         }));
         finish();
@@ -477,7 +508,11 @@ export const useStore = create<Store>((set, get) => {
       try {
         await groupsApi.removeMember(groupId, id);
         set((state) => ({
-          members: state.members.filter((member) => member.id !== id),
+          ...withRoster(
+            state,
+            groupId,
+            rosterOf(state, groupId).filter((member) => member.id !== id),
+          ),
           groups: state.groups.map((group) =>
             group.id === groupId
               ? {
@@ -566,6 +601,7 @@ export const useStore = create<Store>((set, get) => {
           expenses: state.expenses.map((candidate) =>
             candidate.id === saved.id ? saved : candidate,
           ),
+          ledgerRevision: state.ledgerRevision + 1,
         }));
         finish();
       } catch (error) {
@@ -592,6 +628,7 @@ export const useStore = create<Store>((set, get) => {
       const index = get().expenses.findIndex((expense) => expense.id === id);
       set((state) => ({
         expenses: state.expenses.filter((expense) => expense.id !== id),
+        ledgerRevision: state.ledgerRevision + 1,
       }));
 
       const restore = () => {
@@ -600,7 +637,7 @@ export const useStore = create<Store>((set, get) => {
           if (state.expenses.some((expense) => expense.id === id)) return state;
           const expenses = [...state.expenses];
           expenses.splice(index < 0 ? expenses.length : index, 0, current);
-          return { expenses };
+          return { expenses, ledgerRevision: state.ledgerRevision + 1 };
         });
       };
 
@@ -634,6 +671,28 @@ export const useStore = create<Store>((set, get) => {
 
 /* ────────────────────────────────────────────────────────────── helpers ── */
 
+/**
+ * One roster change, applied to both places that hold a roster: the open
+ * group's `members` and the per-group cache. Centralised because a roster edit
+ * that reached only one of them would leave the shared view naming people who
+ * are no longer there.
+ */
+function withRoster(
+  state: State,
+  groupId: string,
+  next: MemberWithMeta[],
+): Pick<State, "members" | "rosters"> {
+  return {
+    members: state.selectedGroupId === groupId ? next : state.members,
+    rosters: { ...state.rosters, [groupId]: next },
+  };
+}
+
+/** The roster this store currently holds for a group. */
+function rosterOf(state: State, groupId: string): MemberWithMeta[] {
+  return state.rosters[groupId] ?? (state.selectedGroupId === groupId ? state.members : []);
+}
+
 /** Installs one group's roster and ledger, and works out who the caller is. */
 function applyGroup(
   set: SetState,
@@ -644,6 +703,7 @@ function applyGroup(
   set((state) => ({
     selectedGroupId: groupId,
     members: roster,
+    rosters: { ...state.rosters, [groupId]: roster },
     expenses: ledger,
     currentUserId: resolveCurrentMemberId(roster),
     groups: state.groups.map((group) =>
@@ -661,14 +721,19 @@ function applyGroup(
 /**
  * Which participant row belongs to the signed-in account.
  *
- * The member list deliberately exposes no user id — `isGhost` is the only
- * link-state it publishes — so this has to be inferred. A ghost is by
- * definition nobody's row; among the rest, the account's display name is the
- * only field the two sides share. When a group has exactly one real user that
- * is unambiguous however they are named, which covers the ordinary case of one
- * account surrounded by placeholders.
+ * The server marks it. It still does not publish the row's `user_id` — that
+ * would leak account identity across a group — but it does answer the one
+ * question a client actually needs, as a boolean it can compute for free.
+ *
+ * This used to be inferred by matching the account's display name against the
+ * roster, which was wrong in two ordinary situations: two people in a group
+ * sharing a first name, and anyone who renamed their own row. The name fallback
+ * is kept only for a server old enough not to send the flag.
  */
 function resolveCurrentMemberId(members: MemberWithMeta[]): string | null {
+  const flagged = members.find((member) => member.isMe);
+  if (flagged) return flagged.id;
+
   const user = useAuth.getState().user;
   if (!user) return null;
 
@@ -693,8 +758,8 @@ function settleCreate(
   pendingCreateIds.delete(key);
   expenseClientIds.set(expense.id, clientId);
 
-  set((state) =>
-    state.selectedGroupId === expense.groupId
+  set((state) => ({
+    ...(state.selectedGroupId === expense.groupId
       ? {
           expenses: [
             ...state.expenses.filter(
@@ -703,8 +768,11 @@ function settleCreate(
             expense,
           ],
         }
-      : {},
-  );
+      : {}),
+    // Bumped even when the expense belongs to a group that is not open: the
+    // shared view pools groups the screen is not showing.
+    ledgerRevision: state.ledgerRevision + 1,
+  }));
 }
 
 /**

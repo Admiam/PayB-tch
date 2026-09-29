@@ -414,3 +414,75 @@
   font-size: var(--pb-text-sm);
   color: var(--pb-text-muted);
 }
+
+/* ──────────────────────────────────────────────────────────── switches ── */
+
+/* The real checkbox stays in the layout but invisible, stretched over the whole
+   control: that keeps the hit area, the focus ring and the keyboard behaviour
+   the browser already gives us, and leaves the track as pure decoration. */
+.pb-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 30px;
+}
+
+.pb-switch__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.pb-switch__input:disabled {
+  cursor: default;
+}
+
+.pb-switch__track {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--pb-radius-chip);
+  background: var(--pb-chip-bg);
+  transition: background var(--pb-duration-fast) var(--pb-ease-snappy);
+  pointer-events: none;
+}
+
+.pb-switch__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--pb-card);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  transition: transform var(--pb-duration-press) var(--pb-ease-snappy);
+}
+
+.pb-switch__input:checked + .pb-switch__track {
+  background: var(--pb-pink);
+}
+
+.pb-switch__input:checked + .pb-switch__track .pb-switch__knob {
+  transform: translateX(18px);
+}
+
+.pb-switch__input:disabled + .pb-switch__track {
+  opacity: 0.45;
+}
+
+/* Focus is drawn on the track, because the input itself is transparent. */
+.pb-switch__input:focus-visible + .pb-switch__track {
+  outline: 2px solid var(--pb-pink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-switch__track,
+  .pb-switch__knob {
+    transition: none;
+  }
+}

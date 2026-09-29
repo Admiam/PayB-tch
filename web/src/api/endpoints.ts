@@ -9,7 +9,8 @@
 
 import { api, setSession, type Session } from "./client";
 import { expenseFromWire, expenseToWire, type WireExpense } from "./wire";
-import type { CurrencyCode, Expense, Group, Member } from "@/domain/types";
+import { fromMinorUnits } from "@/domain/money";
+import { toCurrency, type CurrencyCode, type Expense, type Group, type Member } from "@/domain/types";
 
 /** The server paginates list endpoints with this envelope. */
 interface Page<T> {
@@ -79,6 +80,14 @@ interface MeResponse {
 export const me = {
   get: () => api.get<MeResponse>("/me"),
   setName: (displayName: string) => api.patch<MeResponse>("/me", { displayName }),
+  /**
+   * Everything the server holds about the caller. This is the export, not a
+   * snapshot of what this browser happens to have cached — the two stopped being
+   * the same thing when the data moved off the device.
+   */
+  exportAll: () => api.get<unknown>("/me/export"),
+  /** Closes the account. The ledger is anonymized, not deleted, so other people's balances survive. */
+  remove: () => api.delete<void>("/me"),
 };
 
 /* ────────────────────────────────────────────────────────────── groups ── */
@@ -102,6 +111,14 @@ interface WireMember {
   isGhost: boolean;
   version: number;
   deleted: boolean;
+  /** Whether this row belongs to the calling account. */
+  isMe?: boolean;
+  /**
+   * An opaque, caller-scoped handle for the account behind this row. Two rows
+   * carrying the same key are the same person; a ghost has no account and so
+   * has no key.
+   */
+  linkKey?: string | null;
 }
 
 /** A group plus the membership facts the UI needs but the domain type omits. */
@@ -116,6 +133,14 @@ export interface MemberWithMeta extends Member {
   role: "owner" | "admin" | "member";
   /** A placeholder for someone who has not joined yet. */
   isGhost: boolean;
+  /** The server's own answer to "is this me", rather than a name guess. */
+  isMe: boolean;
+  /**
+   * Cross-group identity, as far as the server will say it. Equal keys mean one
+   * person — which is what lets the shared ledger pair up accounts on its own
+   * and leaves only the ghosts (`null`) for a human to match by hand.
+   */
+  linkKey: string | null;
   version: number;
 }
 
@@ -138,6 +163,8 @@ function toMember(wire: WireMember): MemberWithMeta {
     iconSymbol: wire.iconSymbol,
     role: wire.role,
     isGhost: wire.isGhost,
+    isMe: wire.isMe ?? false,
+    linkKey: wire.linkKey ?? null,
     version: wire.version,
   };
 }
@@ -299,6 +326,105 @@ export const expenses = {
     expenseFromWire(
       await api.get<WireExpense>(`/groups/${groupId}/expenses/${expenseId}`),
       groupId,
+    ),
+};
+
+/* ──────────────────────────────────────────────────────────── balances ── */
+
+interface WireMemberNet {
+  memberId: string;
+  /** Integer minor units as a string — D1 wire money, never a JSON number. */
+  net: string;
+}
+
+interface WireCurrencyBucket {
+  currency: string;
+  balances: WireMemberNet[];
+  simplified: { from: string; to: string; amount: string }[];
+}
+
+interface WireBalances {
+  groupId: string;
+  byCurrency: WireCurrencyBucket[];
+}
+
+/** One currency's slice of a group's balance sheet, in major units. */
+export interface BalanceBucket {
+  currency: CurrencyCode;
+  /** Positive: the group owes this member. Negative: they owe the group. */
+  nets: { memberId: string; net: number }[];
+}
+
+/**
+ * A group's authoritative balance sheet, bucketed per currency.
+ *
+ * The server nets expenses *and* settlements, which is strictly more than the
+ * local `calculateBalances` can see — it only has the expense list. So this is
+ * the right input wherever the numbers have to be right without the whole
+ * ledger in hand, which is exactly the shared view's situation: it spans groups
+ * whose expenses were never loaded.
+ */
+export interface GroupBalanceSheet {
+  groupId: string;
+  buckets: BalanceBucket[];
+}
+
+export const balances = {
+  async get(groupId: string): Promise<GroupBalanceSheet> {
+    const wire = await api.get<WireBalances>(`/groups/${groupId}/balances`);
+    return {
+      groupId,
+      // Buckets whose members all net exactly zero are omitted by the server,
+      // so an absent currency means "settled", not "missing".
+      buckets: wire.byCurrency.map((bucket) => {
+        const currency = toCurrency(bucket.currency);
+        return {
+          currency,
+          nets: bucket.balances.map((row) => ({
+            memberId: row.memberId,
+            net: fromMinorUnits(row.net, currency),
+          })),
+        };
+      }),
+    };
+  },
+};
+
+/* ─────────────────────────────────────────────────────── shared ledger ── */
+
+/** One cluster of member rows the caller has declared to be the same human. */
+export interface SharedPerson {
+  id: string;
+  memberIds: string[];
+}
+
+/**
+ * The caller's cross-group view configuration: which groups are pooled into one
+ * "who owes whom", and who is who across them.
+ *
+ * Server-held rather than device-held, because the pairing is the kind of answer
+ * you give once. Re-teaching a second browser that the Petr in two groups is
+ * one Petr is exactly the chore this feature exists to remove.
+ */
+export interface SharedLedgerConfig {
+  /** Content hash, echoed as `If-Match` on the next write. */
+  version: number;
+  groupIds: string[];
+  people: SharedPerson[];
+}
+
+export const sharedLedger = {
+  get: () => api.get<SharedLedgerConfig>("/me/shared-ledger"),
+
+  /**
+   * Full replace. `version` is sent as the precondition, so a save from another
+   * device that landed first surfaces as a conflict instead of being flattened.
+   */
+  save: (config: SharedLedgerConfig) =>
+    api.put<SharedLedgerConfig>(
+      "/me/shared-ledger",
+      { groupIds: config.groupIds, people: config.people },
+      { version: config.version },
     ),
 };
 

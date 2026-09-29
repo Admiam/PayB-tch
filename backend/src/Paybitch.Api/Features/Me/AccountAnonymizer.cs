@@ -182,6 +182,12 @@ public sealed class AccountAnonymizer(
         await db.NotificationPrefs.Where(p => p.UserId == userId).ExecuteDeleteAsync(ct);
         user.DigestOptIn = false; // opt-in default (User.DigestOptIn)
 
+        // E11 shared ledger: the pooled-group choice and the "who is who" pairings are this account's
+        // private opinion about other people's identities — there is nobody left to hold it, and the
+        // soft-deleted users row means no FK cascade will fire for us.
+        await db.SharedLedgerGroups.Where(g => g.UserId == userId).ExecuteDeleteAsync(ct);
+        await db.SharedLedgerLinks.Where(l => l.UserId == userId).ExecuteDeleteAsync(ct);
+
         // E6 email auth: purge every login/link/verify OTP tied to the user id or the pre-scrub address.
         await db.EmailLoginTokens
             .Where(t => t.UserId == userId || (preScrubEmail != null && t.Email == preScrubEmail))

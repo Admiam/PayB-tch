@@ -19,15 +19,20 @@ export interface MenuAction {
 
 export function PaybitchMenu({
   hasSelectedGroup,
+  canShareDebt,
   onEditGroup,
   onNewGroup,
   onSearch,
+  onSharedDebt,
   onSettings,
 }: {
   hasSelectedGroup: boolean;
+  /** There are at least two groups, so pooling them means something. */
+  canShareDebt: boolean;
   onEditGroup: () => void;
   onNewGroup: () => void;
   onSearch: () => void;
+  onSharedDebt: () => void;
   onSettings: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -67,6 +72,17 @@ export function PaybitchMenu({
         onSelect: run(onNewGroup),
       },
     ],
+    ...(canShareDebt
+      ? [
+          [
+            {
+              label: "Shared debt",
+              icon: "arrow.left.arrow.right",
+              onSelect: run(onSharedDebt),
+            },
+          ],
+        ]
+      : []),
     ...(hasSelectedGroup
       ? [
           [
